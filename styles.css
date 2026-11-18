@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#0c0c0e;--surface:#16161a;--surface-2:#1f1f24;--line:#303037;
+  --ink:#f5f2ec;--muted:#aca69d;
+  --fire:#ff6a3d;--fire-deep:#d93a12;--gold:#f6b53c;
+  --display:'Oswald','Arial Narrow',Impact,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 'DM Sans',Arial,sans-serif}
+body.modal-open{overflow:hidden}
+button,input{font:inherit}
+button,a,input{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer;color:inherit}
+a{color:inherit;text-decoration:none}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+img{max-width:100%;display:block}
+h1,h2,h3,h4,p{margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:600;line-height:1.05;text-transform:uppercase;letter-spacing:.005em}
+h1 em,h2 em{font-style:normal;color:var(--fire)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.skip{position:fixed;left:16px;top:-100px;z-index:100;background:var(--ink);color:var(--bg);padding:14px}
+.skip:focus{top:10px}
+[hidden]{display:none!important}
+
+/* Faixa superior e cabeçalho */
+.top-strip{background:var(--fire-deep);color:#fff;text-align:center;padding:7px 15px;font:600 11px/1.6 var(--display);letter-spacing:.22em;text-transform:uppercase}
+.top-strip span{font-size:8px;margin:0 8px;vertical-align:middle;animation:blink 1.4s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.site-header{max-width:1320px;margin:auto;padding:24px 48px;display:flex;justify-content:space-between;gap:25px;align-items:center;border-bottom:1px solid var(--line)}
+.brand{font:700 27px/1 var(--display);text-transform:uppercase;letter-spacing:.03em;display:flex;gap:14px;align-items:center;white-space:nowrap}
+.brand i{font-style:normal;font-weight:400;color:var(--fire)}
+.brand-symbol{display:grid;place-items:center;width:46px;height:46px;background:var(--fire-deep);color:#fff;font:700 20px var(--display);letter-spacing:.02em;transform:skewX(-8deg)}
+.brand small{display:block;font:500 9px 'DM Sans',Arial,sans-serif;letter-spacing:.24em;margin-top:8px;color:var(--muted)}
+.site-header nav{display:flex;align-items:center;gap:29px;font:500 13px var(--display);letter-spacing:.14em;text-transform:uppercase}
+.site-header nav a:hover,.site-header .text-button:hover{color:var(--fire)}
+.text-button{background:transparent;border:0;padding:8px 0;font:500 13px var(--display);letter-spacing:.14em;text-transform:uppercase}
+#saved-count{display:inline-grid;place-items:center;min-width:22px;height:22px;background:var(--fire-deep);color:#fff;border-radius:50%;margin-left:5px;font:600 11px 'DM Sans',Arial,sans-serif;letter-spacing:0}
+
+/* Abertura */
+main{overflow-x:clip}
+.hero{max-width:1320px;margin:auto;display:grid;grid-template-columns:.95fr 1.05fr;gap:48px;padding:64px 48px 72px;align-items:center;position:relative}
+.eyebrow{font:600 12px/1.6 var(--display);letter-spacing:.24em;text-transform:uppercase;color:var(--fire)}
+.hero .eyebrow span{display:inline-block;width:34px;height:2px;background:var(--fire);vertical-align:middle;margin-right:8px}
+.hero h1{font-size:clamp(46px,6vw,86px);font-weight:700;margin:20px 0 24px}
+.intro{font-size:19px;line-height:1.6}
+.hero-description{font-size:14px;color:var(--muted);max-width:360px;margin:12px 0 28px}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:22px;padding:14px 24px;border:0;background:var(--fire-deep);color:#fff;font:600 14px var(--display);letter-spacing:.14em;text-transform:uppercase;min-height:50px;clip-path:polygon(0 0,100% 0,calc(100% - 12px) 100%,0 100%);padding-right:34px;transition:background .2s}
+.button:hover{background:#b92f0c}
+.button:disabled{background:var(--surface-2);color:var(--muted);cursor:default}
+.button span{font-size:20px;font-weight:400;line-height:1}
+.hand-note{display:block;font-size:12px;color:var(--muted);margin-top:22px;padding-left:12px;border-left:2px solid var(--gold)}
+.hero-visual{position:relative}
+.hero-visual:before{content:'';position:absolute;inset:-12% -10%;background:radial-gradient(closest-side,#ff5a2a55,#ff5a2a14 55%,transparent 75%);z-index:0;pointer-events:none}
+.hero-visual>img{position:relative;width:100%;height:520px;object-fit:cover;background:var(--surface-2);clip-path:polygon(9% 0,100% 0,100% 100%,0 100%,0 14%)}
+.seal{position:absolute;top:-22px;right:-18px;z-index:2;background:var(--gold);color:#17120a;border-radius:50%;width:108px;height:108px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:600 12px/1.25 var(--display);letter-spacing:.14em;transform:rotate(10deg);text-align:center;box-shadow:0 0 0 5px var(--bg),0 0 0 7px var(--gold)}
+.seal i{font:700 25px/1 var(--display);font-style:normal;letter-spacing:.04em}
+.hero-caption{position:absolute;z-index:2;left:0;right:40px;bottom:26px;background:#0c0c0eee;border:0;border-left:4px solid var(--fire);text-align:left;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.hero-caption small{font:600 10px var(--display);letter-spacing:.2em;color:var(--fire);display:block;margin-bottom:5px}
+.hero-caption strong{font:600 25px/1.1 var(--display);text-transform:uppercase}
+.round-arrow{background:var(--fire-deep);color:#fff;width:42px;height:42px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.hero-caption:hover .round-arrow{background:var(--gold);color:#17120a}
+
+/* Faixa */
+.ribbon{display:flex;justify-content:center;gap:42px;padding:13px 15px;background:var(--fire-deep);color:#fff;font:600 13px var(--display);letter-spacing:.26em}
+.ribbon span:nth-child(even){color:var(--gold)}
+
+/* Provas */
+.section{max-width:1320px;margin:auto;padding:76px 48px}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:36px}
+.section-heading h2{font-size:52px;margin-top:12px}
+.section-heading>p{max-width:320px;font-size:14px;color:var(--muted);padding-bottom:3px}
+.collection-tools{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter{border:1px solid var(--line);background:transparent;padding:9px 16px;font:500 12px var(--display);letter-spacing:.14em;text-transform:uppercase;min-height:40px;white-space:nowrap;transition:border-color .2s,background .2s}
+.filter:hover{border-color:var(--fire)}
+.filter.active{background:var(--fire-deep);border-color:var(--fire-deep);color:#fff}
+.search{display:flex;align-items:center;border-bottom:1px solid #6b665f;gap:9px;padding:6px 0;width:250px;max-width:100%}
+.search:focus-within{border-color:var(--fire)}
+.search svg{width:18px;height:18px;fill:none;stroke:var(--muted);stroke-width:1.5;flex-shrink:0}
+.search input{border:0;background:transparent;font-size:13px;width:100%;min-width:0;color:var(--ink);padding:7px 0}
+.search input::placeholder{color:var(--muted)}
+.results-status{font-size:12px;color:var(--muted);margin:17px 0 23px;min-height:18px}
+.recipe-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 24px}
+.recipe-card{position:relative;min-width:0;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;transition:border-color .25s,transform .25s}
+.recipe-card:hover{border-color:var(--fire);transform:translateY(-3px)}
+.card-picture{display:block;position:relative;overflow:hidden;background:var(--surface-2);aspect-ratio:1.4}
+.card-picture img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
+.recipe-card:hover .card-picture img{transform:scale(1.04)}
+.card-num{position:absolute;left:0;bottom:0;background:var(--fire-deep);color:#fff;font:600 12px var(--display);letter-spacing:.18em;text-transform:uppercase;padding:6px 18px 6px 12px;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.save-card{position:absolute;top:12px;right:12px;width:40px;height:40px;border:1px solid #ffffff40;background:#0c0c0ecc;border-radius:50%;color:#fff;font-size:22px;display:grid;place-items:center;line-height:1;z-index:1}
+.save-card:hover{border-color:var(--fire)}
+.save-card[aria-pressed=true]{background:var(--fire-deep);border-color:var(--fire-deep)}
+.card-copy{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+.card-tag{display:block;margin-bottom:8px;font:600 11px var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.recipe-card h3{font-size:26px;line-height:1.12;margin-bottom:10px}
+.recipe-card h3 a:hover{color:var(--fire)}
+.recipe-card p{color:var(--muted);font-size:13px;flex:1}
+.card-meta{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);margin-top:17px;padding-top:13px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.card-link{display:inline-block;color:var(--fire);font:600 12px var(--display);letter-spacing:.16em;text-transform:uppercase;margin-top:14px;min-height:28px}
+.card-link span{margin-left:8px}
+.recipe-card:first-child{grid-column:span 2;display:grid;grid-template-columns:1.25fr 1fr;align-items:stretch;border-color:var(--fire-deep)}
+.recipe-card:first-child .card-picture{aspect-ratio:auto;min-height:340px}
+.recipe-card:first-child .card-copy{justify-content:center;padding:28px}
+.recipe-card:first-child p{flex:0 1 auto}
+.recipe-card:first-child h3{font-size:38px}
+.recipe-card:first-child .save-card{right:auto;left:12px}
+.empty{padding:55px 20px;text-align:center;border:1px dashed var(--line)}
+.empty h3{font-size:28px}
+.empty p{margin:15px 0 23px;color:var(--muted)}
+
+/* Regras da bancada */
+.kitchen-notes{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:24px;border-top:1px solid var(--line)}
+.notes-title h2{font-size:40px;margin-top:12px}
+.note{padding:24px;background:var(--surface);border-top:3px solid var(--fire-deep)}
+.note-symbol{font:700 44px/1 var(--display);color:transparent;-webkit-text-stroke:1px var(--fire);display:block;margin-bottom:18px}
+.note h3{font-size:23px;line-height:1.15;margin-bottom:13px}
+.note p{font-size:13px;color:var(--muted)}
+
+/* Fechamento e rodapé */
+.closing{text-align:center;padding:84px 20px 88px;background:radial-gradient(ellipse 60% 90% at 50% 110%,#d93a1266,transparent 70%),var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.closing h2{font-size:clamp(44px,6vw,76px);font-weight:700;margin:16px 0 20px}
+.closing>p:not(.eyebrow){font-size:14px;color:var(--muted);margin-bottom:28px}
+.site-footer{max-width:1320px;padding:35px 48px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:25px;flex-wrap:wrap}
+.site-footer .brand{font-size:22px;gap:7px}
+.site-footer>p{font-size:12px;color:var(--muted)}
+.site-footer .fine-print{font-size:11px;flex-basis:100%;padding-top:20px;border-top:1px solid var(--line)}
+
+/* Receita */
+dialog{padding:0;width:min(1080px,calc(100% - 40px));max-height:calc(100svh - 40px);border:1px solid var(--line);border-top:4px solid var(--fire-deep);background:var(--bg);color:var(--ink);overflow:auto;overscroll-behavior:contain}
+dialog::backdrop{background:#000000cc;backdrop-filter:blur(4px)}
+.dialog-toolbar{position:sticky;top:0;background:#0c0c0ef5;z-index:3;border-bottom:1px solid var(--line);padding:12px 25px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.dialog-toolbar>div{display:flex;gap:10px;align-items:center}
+.dialog-toolbar .text-button:hover{color:var(--fire)}
+.icon-button{background:transparent;border:1px solid var(--line);min-height:40px;font:500 12px var(--display);letter-spacing:.12em;text-transform:uppercase;padding:8px 14px}
+.icon-button:hover{border-color:var(--fire)}
+.icon-button[aria-pressed=true]{color:var(--fire);border-color:var(--fire)}
+.close-button{width:40px;height:40px;font-size:29px;line-height:1;border:0;background:transparent}
+.close-button:hover{color:var(--fire)}
+.recipe-hero{display:grid;grid-template-columns:1fr 1fr;gap:36px;padding:36px;align-items:center}
+.recipe-hero img{width:100%;aspect-ratio:1.05;object-fit:cover;background:var(--surface-2);clip-path:polygon(10% 0,100% 0,100% 100%,0 100%,0 12%)}
+.recipe-hero h2{font-size:48px;font-weight:700;margin:10px 0 16px}
+.recipe-hero .recipe-intro{font-size:14px;color:var(--muted)}
+.recipe-facts{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0 0}
+.recipe-facts div{border-left:2px solid var(--fire-deep);padding-left:12px}
+.recipe-facts dt{font:500 10px var(--display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.recipe-facts dd{margin:3px 0 0;font-size:13px}
+.timer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px;padding:16px 18px;background:var(--surface);border:1px solid var(--line)}
+.timer-label{display:block;font:500 10px var(--display);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.timer-display{font:700 50px/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:.03em;margin-top:4px}
+.timer.running{border-color:var(--fire)}
+.timer.running .timer-display{color:var(--fire)}
+.timer.done{border-color:var(--gold)}
+.timer.done .timer-display{color:var(--gold);animation:blink 1s steps(2) 5}
+.timer-actions{display:flex;gap:8px;align-items:center}
+.timer-actions .button{min-height:42px;padding:10px 28px 10px 18px;font-size:13px}
+.recipe-body{display:grid;grid-template-columns:.85fr 1.4fr;gap:40px;padding:0 36px 36px}
+.recipe-body h3,.finish h3{font:600 24px var(--display);color:var(--ink);padding-bottom:10px;border-bottom:2px solid var(--fire-deep);margin-bottom:20px}
+.ingredient-group h4{font:600 12px var(--display);text-transform:uppercase;letter-spacing:.16em;color:var(--gold);margin:23px 0 10px}
+.ingredient-list{list-style:none;margin:0;padding:0}
+.ingredient-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.55}
+.ingredient-list label{display:flex;gap:10px;align-items:start;cursor:pointer}
+.ingredient-list input{accent-color:var(--fire-deep);margin:3px 0 0;width:16px;height:16px;flex-shrink:0}
+.ingredient-list input:checked+span{text-decoration:line-through;color:var(--muted)}
+.equipment{font-size:12px;color:var(--muted);padding:15px;background:var(--surface);border-left:3px solid var(--gold);margin-top:20px}
+.equipment strong{display:block;color:var(--ink);font:600 12px var(--display);letter-spacing:.16em;text-transform:uppercase;margin-bottom:5px}
+.preparation{list-style:none;padding:0;margin:0;counter-reset:step}
+.preparation li{counter-increment:step;position:relative;margin-bottom:24px;padding-left:58px}
+.preparation li:before{content:counter(step,decimal-leading-zero);position:absolute;left:0;top:-3px;font:700 34px/1 var(--display);color:var(--fire)}
+.preparation h4{font:600 19px/1.2 var(--display);text-transform:uppercase;letter-spacing:.03em;margin:0 0 7px}
+.preparation p{font-size:14px;line-height:1.75;color:#ddd8d0}
+.finish{padding:20px;background:var(--surface);border:1px solid var(--line)}
+.finish h3{font-size:21px;margin-bottom:12px}
+.finish p,.recipe-tip{font-size:14px;line-height:1.75}
+.recipe-tip{margin-top:20px;padding:18px;border:1px dashed var(--gold)}
+.recipe-tip strong{display:block;color:var(--gold);font:600 18px var(--display);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.measurement-note{font-size:11px;color:var(--muted);margin-top:15px}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;z-index:15;font-size:13px;max-width:90%;width:max-content}
+
+@media(max-width:1000px){
+  .site-header{padding:22px 25px}.site-header nav{gap:17px}
+  .hero{padding:48px 25px 56px;gap:32px}.hero-visual>img{height:440px}
+  .seal{right:-8px;width:92px;height:92px;font-size:10px}.seal i{font-size:21px}
+  .section{padding:56px 25px}.section-heading h2{font-size:42px}
+  .collection-tools{align-items:start;flex-direction:column}.search{width:100%}
+  .recipe-grid{gap:22px 18px}.recipe-card h3{font-size:22px}.card-copy{padding:15px}
+  .recipe-card:first-child h3{font-size:30px}.recipe-card:first-child .card-copy{padding:20px}
+  .kitchen-notes{grid-template-columns:1fr 1fr}
+  .ribbon{gap:20px;font-size:11px}.recipe-hero h2{font-size:38px}
+}
+@media(max-width:700px){
+  .top-strip{font-size:10px;letter-spacing:.16em}
+  .site-header{padding:20px;display:block}.brand{font-size:24px}.brand-symbol{width:40px;height:40px;font-size:17px}.brand small{font-size:8px}
+  .site-header nav{margin-top:20px;justify-content:space-between;gap:10px;font-size:12px;letter-spacing:.1em}.site-header .text-button{font-size:12px;letter-spacing:.1em}
+  .hero{grid-template-columns:minmax(0,1fr);padding:36px 20px 44px;gap:40px}.hero h1{font-size:44px;margin-top:14px}.hero .intro{font-size:17px}.hero-description{max-width:100%}
+  .hero .button{width:100%;justify-content:space-between}
+  .hero-visual>img{height:360px}.hero-caption{right:20px;padding:14px 15px;bottom:20px}.hero-caption strong{font-size:22px}
+  .seal{right:4px;top:-26px}
+  .ribbon{gap:12px;font-size:10px;letter-spacing:.18em;padding:12px 10px}.ribbon span:nth-child(n+4){display:none}
+  .section{padding:44px 20px}.section-heading{display:block}.section-heading h2{font-size:36px}.section-heading>p{margin-top:18px;max-width:100%}
+  .filters{gap:6px}.filter{font-size:11px;padding:8px 11px;letter-spacing:.1em}
+  .recipe-grid{grid-template-columns:1fr 1fr;gap:16px 12px}
+  .recipe-card:first-child{grid-column:1/-1;display:flex}.recipe-card:first-child .card-picture{aspect-ratio:1.4;min-height:0}.recipe-card:first-child h3{font-size:28px}.recipe-card:first-child .card-copy{padding:16px}
+  .recipe-card:first-child .save-card{left:auto;right:8px}
+  .recipe-card h3{font-size:19px}.recipe-card p{font-size:12px}.card-copy{padding:12px}
+  .card-picture{aspect-ratio:1}.card-tag{font-size:10px;letter-spacing:.12em;line-height:1.5}.card-num{font-size:10px;padding:5px 15px 5px 9px}
+  .save-card{width:36px;height:36px;top:8px;right:8px;font-size:19px}
+  .card-meta{flex-direction:column;font-size:10px;gap:3px}.card-link{font-size:11px;letter-spacing:.12em}
+  .kitchen-notes{grid-template-columns:1fr;gap:16px}.notes-title h2{font-size:36px}.notes-title{margin-bottom:8px}
+  .note{padding:20px}.note h3 br{display:none}.note-symbol{font-size:36px;margin-bottom:12px}
+  .closing{padding:56px 20px 60px}
+  .site-footer{padding:30px 20px;gap:14px}
+  dialog{width:100%;max-width:100%;height:100svh;max-height:100svh;margin:0;border-left:0;border-right:0;border-bottom:0}
+  .dialog-toolbar{padding:10px 13px;gap:7px}.dialog-toolbar .text-button{font-size:11px;letter-spacing:.06em}.dialog-toolbar>div{gap:5px}
+  .icon-button{font-size:11px;padding:8px 9px;letter-spacing:.06em}.close-button{width:33px}
+  .recipe-hero{grid-template-columns:minmax(0,1fr);gap:24px;padding:24px 20px}.recipe-hero img{aspect-ratio:1.5;grid-row:1}.recipe-hero h2{font-size:36px}
+  .timer-display{font-size:44px}
+  .recipe-body{grid-template-columns:minmax(0,1fr);padding:0 20px 30px;gap:30px}
+  .ingredient-list li{font-size:14px;padding:10px 0}.preparation li{padding-left:50px}.preparation li:before{font-size:30px}
+}
+@media(max-width:360px){
+  .hero h1{font-size:38px}.recipe-grid{grid-template-columns:1fr}.card-picture{aspect-ratio:1.4}.brand{font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media print{
+  html,body{background:white;color:black;font:11pt/1.5 Georgia,serif}
+  body>*{display:none!important}
+  body>dialog[open]{display:block!important;position:static;width:100%;height:auto;max-height:none;border:0;overflow:visible;margin:0;background:white}
+  dialog[open] *{color:black!important;background:transparent!important;border-color:#bbb!important;-webkit-text-stroke:0!important}
+  .dialog-toolbar,.timer{display:none!important}
+  dialog::backdrop{display:none}
+  .recipe-hero{padding:0 0 20px;grid-template-columns:1.4fr 1fr;gap:20px}
+  .recipe-hero h2{font-size:26pt}
+  .recipe-hero img{max-height:190px;width:100%;object-fit:cover;clip-path:none}
+  .recipe-body{padding:0;gap:25px;grid-template-columns:.85fr 1.4fr}
+  .recipe-facts{margin-top:15px}
+  .ingredient-list input{display:none}
+  .ingredient-list input:checked+span{text-decoration:none}
+  .preparation li,.ingredient-group,.finish,.recipe-tip{break-inside:avoid}
+  .preparation p,.ingredient-list li,.finish p,.recipe-tip{font-size:10pt}
+  @page{size:A4;margin:15mm}
+}
