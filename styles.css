@@ -104,7 +104,7 @@ h1 em, h2 em { font-style: italic; color: var(--accent); font-weight: 400; }
 
 /* ---------- linha de categorias + mega menu ---------- */
 .catnav { position: relative; border-top: 1px solid var(--line); }
-.catnav-list { list-style: none; margin: 0 auto; padding: 0 20px; max-width: 1240px; display: flex; justify-content: safe center; gap: 0; overflow-x: auto; scrollbar-width: none; }
+.catnav-list { list-style: none; margin: 0 auto; padding: 0 4px; max-width: 1240px; display: flex; justify-content: safe center; gap: 0; overflow-x: auto; scrollbar-width: none; }
 .catnav-list::-webkit-scrollbar { display: none; }
 .catnav-link { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 14px 12px; font-size: 14.5px; font-weight: 600; color: var(--ink-2); white-space: nowrap; transition: color .2s; }
 .catnav-link i { width: 7px; height: 7px; border-radius: 50%; opacity: .75; transition: transform .25s var(--ease); }
