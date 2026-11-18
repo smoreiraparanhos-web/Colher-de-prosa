@@ -42,6 +42,13 @@ window.FOTOS = {
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Cocada_on_black_background_20072011.jpg"
  },
+ "banana": {
+  "src": "assets/fotos/banana.jpg",
+  "autor": "Siobhan Leachman",
+  "licenca": "CC0",
+  "licencaUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Banana_and_chocolate_cake.jpg"
+ },
  "arroz": {
   "src": "assets/fotos/arroz.jpg",
   "autor": "Ross Berteig from Monrovia, California, USA",
@@ -90,6 +97,13 @@ window.FOTOS = {
   "licenca": "CC BY-SA 2.0",
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Spinach_and_ricotta_cannelloni.jpg"
+ },
+ "macarrao-forno-frango": {
+  "src": "assets/fotos/macarrao-forno-frango.jpg",
+  "autor": "Benoît Prieur",
+  "licenca": "CC0",
+  "licencaUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Pizzeria_Bella_Italia_(Cr%C3%A9pieux-la-Pape)_-_Gratin_de_cappelletti.jpg"
  },
  "carbonara": {
   "src": "assets/fotos/carbonara.jpg",
@@ -252,6 +266,13 @@ window.FOTOS = {
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Salpic%C3%A3o_1.jpg"
  },
+ "maionese-batata": {
+  "src": "assets/fotos/maionese-batata.jpg",
+  "autor": "jules",
+  "licenca": "CC BY 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Potato_salad_3.jpg"
+ },
  "rabanada": {
   "src": "assets/fotos/rabanada.jpg",
   "autor": "Ocdp",
@@ -279,6 +300,13 @@ window.FOTOS = {
   "licenca": "CC BY-SA 4.0",
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Bolinho_de_Bacalhau.jpg"
+ },
+ "pescada-legumes": {
+  "src": "assets/fotos/pescada-legumes.jpg",
+  "autor": "gran",
+  "licenca": "CC BY 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by/3.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Baked_fillet_with_asparagous.JPG"
  },
  "cordeiro-alecrim": {
   "src": "assets/fotos/cordeiro-alecrim.jpg",
@@ -308,6 +336,13 @@ window.FOTOS = {
   "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Autumn_Chickpea_Salad_(3986173540).jpg"
  },
+ "ovo-colher": {
+  "src": "assets/fotos/ovo-colher.jpg",
+  "autor": "Chris Woodrich",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Chocolate_Easter_eggs_in_foil,_Canada,_2026-02-27_01.jpg"
+ },
  "colomba": {
   "src": "assets/fotos/colomba.jpg",
   "autor": "N i c o l a from Fiumicino (Rome), Italy",
@@ -328,6 +363,13 @@ window.FOTOS = {
   "licenca": "CC BY 2.0",
   "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Beef_stroganoff_with_pasta.jpg"
+ },
+ "escondidinho-carne-seca": {
+  "src": "assets/fotos/escondidinho-carne-seca.jpg",
+  "autor": "Andy Li",
+  "licenca": "CC0",
+  "licencaUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Shepherds_pie_-_The_Kew_Greenhouse_Cafe_2025-05-14.jpg"
  },
  "feijoada": {
   "src": "assets/fotos/feijoada.jpg",
@@ -399,6 +441,13 @@ window.FOTOS = {
   "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Beef_Stroganoff-04.jpg"
  },
+ "frango-curry": {
+  "src": "assets/fotos/frango-curry.jpg",
+  "autor": "Katrin Gilger",
+  "licenca": "CC BY-SA 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Asian_Chicken_Curry_(4652719000).jpg"
+ },
  "asinha-mel": {
   "src": "assets/fotos/asinha-mel.jpg",
   "autor": "City Foodsters",
@@ -441,6 +490,20 @@ window.FOTOS = {
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Mango_Avocado_Almond_Salad_-_The_Rogue_Elephant,_Bangalore_-_karnataka_-_DSC_0003.jpg"
  },
+ "vinagrete": {
+  "src": "assets/fotos/vinagrete.jpg",
+  "autor": "jeffreyw",
+  "licenca": "CC BY 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Mmm..._Pico_de_Gallo_(5923456035).jpg"
+ },
+ "molho-tomate": {
+  "src": "assets/fotos/molho-tomate.jpg",
+  "autor": "Dennis Klein klein2",
+  "licenca": "CC0",
+  "licencaUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Fresh_Tomato_Sauce_(Unsplash).jpg"
+ },
  "bechamel": {
   "src": "assets/fotos/bechamel.jpg",
   "autor": "Jacek Halicki",
@@ -482,5 +545,26 @@ window.FOTOS = {
   "licenca": "CC BY 2.0",
   "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Texas_caviar.jpg"
+ },
+ "talharim-pesto": {
+  "src": "assets/fotos/talharim-pesto.jpg",
+  "autor": "Marinella Ferrero",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Tagliatelle_al_pesto_di_menta.JPG"
+ },
+ "bolo-milho": {
+  "src": "assets/fotos/bolo-milho.jpg",
+  "autor": "EvanProdromou",
+  "licenca": "CC BY 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by/4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Cornbread_2.jpg"
+ },
+ "hamburguer-caseiro": {
+  "src": "assets/fotos/hamburguer-caseiro.jpg",
+  "autor": "Renee Comet (photographer)",
+  "licenca": "Public domain",
+  "licencaUrl": "",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Cheeseburger.jpg"
  }
 };
