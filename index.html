@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#FAF6EF">
-<meta name="description" content="Colher de Prosa: receitas brasileiras organizadas com cuidado. Medidas claras, porções que se ajustam, lista de compras e modo cozinhar.">
+<meta name="description" content="Colher de Prosa: receitas brasileiras organizadas com cuidado. Medidas claras, porções que se ajustam e receitas salvas direto no WhatsApp.">
 <title>Colher de Prosa · Receitas de casa, com tempo para a prosa</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="styles.css">
+<script src="data/fotos.js" defer></script>
 <script src="data/classicos.js" defer></script>
 <script src="data/massas.js" defer></script>
 <script src="data/bebidas.js" defer></script>
@@ -42,7 +43,6 @@
     </form>
     <div class="masthead-actions">
       <a href="#/favoritas" class="pill-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Favoritas</span><span class="count" id="fav-count" hidden>0</span></a>
-      <button type="button" class="pill-link" id="open-list"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h13l-1.5 9h-10z"/><path d="M6 7 5 4H3"/><circle cx="9" cy="20" r="1.3"/><circle cx="16" cy="20" r="1.3"/></svg><span>Lista de compras</span><span class="count" id="list-count" hidden>0</span></button>
     </div>
   </div>
   <nav class="catnav" id="catnav" aria-label="Categorias de receitas">
@@ -60,14 +60,22 @@
       <p>Um caderno de receitas brasileiras para cozinhar com calma e servir com conversa.</p>
     </div>
     <nav aria-label="Rodapé" class="footer-links" id="footer-links"></nav>
-    <p class="fine">Projeto independente em fase inicial. As ilustrações substituem fotografias até a produção do ensaio fotográfico. Tempos, rendimentos e conversões de porção são aproximados; confira os ingredientes em caso de alergias ou restrições alimentares.</p>
+    <p class="fine">Projeto independente em fase inicial. Fotos do Wikimedia Commons sob licenças livres: veja os créditos. Tempos, rendimentos e conversões de porção são aproximados; confira os ingredientes em caso de alergias ou restrições alimentares.</p>
   </div>
 </footer>
 
-<dialog class="drawer" id="list-drawer" aria-labelledby="list-title">
-  <div class="drawer-head"><h2 id="list-title">Lista de compras</h2><button class="icon-btn" data-close aria-label="Fechar lista">×</button></div>
-  <div class="drawer-body" id="list-body"></div>
-  <div class="drawer-foot" id="list-foot"></div>
+<dialog class="wa-dialog" id="wa-dialog" aria-labelledby="wa-title">
+  <form id="wa-form" novalidate>
+    <div class="wa-head"><h2 id="wa-title">Salvar receita no WhatsApp</h2><button type="button" class="icon-btn" data-close aria-label="Fechar">×</button></div>
+    <p>Informe o seu número e a receita chega na conversa com você mesmo, pronta para guardar. Da próxima vez é um toque só.</p>
+    <label for="wa-number">Seu WhatsApp com DDD</label>
+    <input id="wa-number" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="(11) 91234-5678">
+    <p class="wa-error" id="wa-error" role="alert" hidden>Confira o número: DDD + número, como (11) 91234-5678.</p>
+    <label class="check"><input type="checkbox" id="wa-remember" checked><span>Lembrar meu número neste aparelho</span></label>
+    <button class="btn btn-wa wide">Enviar para mim</button>
+    <button type="button" class="link-btn" data-wa-any>Prefiro escolher um contato no WhatsApp</button>
+    <p class="wa-privacy">O número fica só neste navegador. O site não guarda nem envia seus dados para nenhum servidor.</p>
+  </form>
 </dialog>
 
 <dialog class="cook" id="cook" aria-labelledby="cook-title"></dialog>

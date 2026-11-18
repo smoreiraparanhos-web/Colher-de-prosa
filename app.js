@@ -45,8 +45,9 @@
       : [{ name: '', items: r.ing || [] }];
     const steps = r.steps.map(s => Array.isArray(s) ? { title: s[0], text: s[1] } : s);
     const items = groups.flatMap(g => g.items);
+    const foto = (window.FOTOS || {})[r.id];
     return {
-      ...r, groups, steps, tags: r.tags || [], i,
+      ...r, groups, steps, tags: r.tags || [], i, foto, photo: foto?.src,
       ingText: norm(items.join(' | ')),
       haystack: norm([r.title, r.line, CAT[r.category]?.name, ...items].join(' ')),
       count: items.length
@@ -57,7 +58,7 @@
 
   /* ---------- estado persistente ---------- */
   let favorites = new Set(store.get('cp-favoritas', []).filter(id => BY_ID[id]));
-  let list = store.get('cp-lista', []).filter(x => x && BY_ID[x.recipe]);
+  let waNumber = store.get('cp-whatsapp', '');
   const servingsPref = store.get('cp-porcoes', {});
 
   /* ---------- ícones ---------- */
@@ -71,6 +72,7 @@
     print: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="2"/><path d="M7 14h10v6H7z"/></svg>',
     link: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>',
     fridge: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M6 10h12M9 6v2M9 13v3"/></svg>',
+    wa: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.4 18.6z"/><path d="M9.2 8.6c.2-.5.6-.6 1-.5l.9 1.9-.6.8c.4.9 1.3 1.8 2.3 2.3l.8-.6 1.9.9c.1.4 0 .8-.5 1-1.6.9-5.5-2-5.8-5.8z"/></svg>',
     chef: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 14.5V20h10v-5.5"/><path d="M7 14.5a4 4 0 0 1-.6-7.9A5 5 0 0 1 12 3a5 5 0 0 1 5.6 3.6 4 4 0 0 1-.6 7.9z"/><path d="M7 17h10"/></svg>'
   };
 
@@ -184,8 +186,8 @@
     'molho-tomate': 'massas', 'pesto': 'saladas', 'feijoada': 'doces'
   };
   let uid = 0;
-  function art(r, cls = '') {
-    if (r.photo) return `<img class="art ${cls}" src="${esc(r.photo)}" alt="" loading="lazy">`;
+  function art(r, cls = '', alt = '') {
+    if (r.photo) return `<img class="art ${cls}" src="${esc(r.photo)}" alt="${esc(alt)}" loading="lazy" decoding="async">`;
     const c = CAT[r.category], rnd = seeded(r.id);
     const tilt = (rnd() * 8 - 4).toFixed(1);
     let deco = '';
@@ -271,13 +273,14 @@
     return `<a class="mini" href="#/receita/${r.id}" style="--tone:${c.tone};--cink:${c.ink}"><span class="mini-art">${art(r)}</span><span class="mini-copy"><span class="tag">${esc(c.name)}</span><strong>${esc(r.title)}</strong></span></a>`;
   }
   const grid = (rs, cls = '') => `<div class="grid ${cls}">${rs.map(card).join('')}</div>`;
-  const daily = (arr, n, salt = '') => { const rnd = seeded(new Date().toDateString() + salt); return [...arr].sort(() => rnd() - 0.5).slice(0, n); };
+  // Sorteio do dia, dando preferência às receitas que já têm foto.
+  const daily = (arr, n, salt = '') => { const rnd = seeded(new Date().toDateString() + salt); return [...arr].map(r => [r, rnd()]).sort((a, b) => (!!b[0].photo - !!a[0].photo) || a[1] - b[1]).map(x => x[0]).slice(0, n); };
 
   /* ---------- navegação de categorias + mega menu ---------- */
   const nav = $('#catnav'), mega = $('#mega'), navList = $('#catnav-list');
   navList.innerHTML = CATS.map(c => `<li><a class="catnav-link" href="#/categoria/${c.key}" data-mega="${c.key}" aria-expanded="false" aria-controls="mega">${esc(c.name)}</a></li>`).join('')
     + `<li><a class="catnav-link more" href="#/receitas" data-mega="mais" aria-expanded="false" aria-controls="mega">E muito mais<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></a></li>`;
-  $('#footer-links').innerHTML = CATS.map(c => `<a href="#/categoria/${c.key}">${esc(c.name)}</a>`).join('') + COLLECTIONS.map(c => `<a href="#/colecao/${c.key}">${esc(c.name)}</a>`).join('');
+  $('#footer-links').innerHTML = CATS.map(c => `<a href="#/categoria/${c.key}">${esc(c.name)}</a>`).join('') + COLLECTIONS.map(c => `<a href="#/colecao/${c.key}">${esc(c.name)}</a>`).join('') + '<a href="#/creditos">Créditos das fotos</a>';
 
   let megaKey = null, openTimer, closeTimer;
   function preview(r) {
@@ -292,7 +295,6 @@
         <ul class="mega-tools">
           <li><a href="#/geladeira">${ICON.fridge}<span><strong>O que tem na geladeira?</strong>Digite o que sobrou e veja o que dá para fazer.</span></a></li>
           <li><a href="#/favoritas">${ICON.heart}<span><strong>Minhas favoritas</strong>As receitas que você guardou.</span></a></li>
-          <li><button type="button" data-open-list>${ICON.cart}<span><strong>Lista de compras</strong>Ingredientes das receitas que você vai fazer.</span></button></li>
         </ul></div>`;
       return;
     }
@@ -404,7 +406,7 @@
     </section>
 
     <section class="wrap round-cats" aria-label="Categorias">
-      ${CATS.map(c => { const rs = inCat(c.key); return `<a href="#/categoria/${c.key}" style="--tone:${c.tone}"><span class="round">${art(rs[1] || rs[0])}</span><span>${esc(c.name)}</span></a>`; }).join('')}
+      ${CATS.map(c => { const rs = inCat(c.key); return `<a href="#/categoria/${c.key}" style="--tone:${c.tone}"><span class="round">${art(rs.find(r => r.photo) || rs[0])}</span><span>${esc(c.name)}</span></a>`; }).join('')}
     </section>
 
     <div class="wrap home-cols">
@@ -418,10 +420,9 @@
       </div>
       <aside class="home-side">
         <div class="side-box"><h2>Coleções</h2><ul class="coll-list">${COLLECTIONS.map(c => `<li><a href="#/colecao/${c.key}"><strong>${esc(c.name)}</strong><span>${esc(c.desc)}</span></a></li>`).join('')}</ul></div>
-        ${s ? `<a class="side-season" href="#/categoria/${s.key}" style="--tone:${CAT[s.key].tone}"><span class="side-season-art">${art(inCat(s.key)[0])}</span><strong>${s.title}</strong><span>${s.desc}</span><em>Ver a ceia completa ${ICON.arrow}</em></a>` : ''}
+        ${s ? `<a class="side-season" href="#/categoria/${s.key}" style="--tone:${CAT[s.key].tone}"><span class="side-season-art">${art(inCat(s.key).find(r => r.photo) || inCat(s.key)[0])}</span><strong>${s.title}</strong><span>${s.desc}</span><em>Ver a ceia completa ${ICON.arrow}</em></a>` : ''}
         <div class="side-box side-tools">
           <a href="#/favoritas">${ICON.heart}<span><strong>Minhas favoritas</strong>Toque no coração para guardar receitas.</span></a>
-          <button type="button" data-open-list>${ICON.cart}<span><strong>Lista de compras</strong>Junte os ingredientes das receitas da semana.</span></button>
         </div>
       </aside>
     </div>`;
@@ -502,12 +503,14 @@
             <h1>${esc(r.title)}</h1>
             <p class="lede">${esc(r.line)}</p>
             <div class="recipe-actions">
+              <button class="btn btn-wa" data-wa="${r.id}">${ICON.wa} Salvar no WhatsApp</button>
               <button class="btn btn-ghost" data-fav="${r.id}" aria-pressed="${fav}">${ICON.heart}<span>${fav ? 'Guardada' : 'Guardar'}</span></button>
               <button class="btn btn-ghost" data-share>${ICON.link}<span>Compartilhar</span></button>
               <button class="btn btn-ghost" data-print>${ICON.print}<span>Imprimir</span></button>
             </div>
+            ${waNumber ? `<p class="wa-note">O WhatsApp abre direto na conversa com ${esc(fmtPhone(waNumber))}. <button type="button" class="link-btn" data-wa-change>Trocar número</button></p>` : ''}
           </header>
-          <div class="recipe-photo">${art(r, 'big')}</div>
+          <figure class="recipe-photo">${art(r, 'big', r.photo ? r.title : '')}${r.foto ? `<figcaption>${credit(r.foto)}</figcaption>` : ''}</figure>
           <ul class="info-bar">
             <li>${ICON.clock}<span>Preparo<strong>${esc(r.prep)}</strong></span></li>
             <li>${ICON.clock}<span>Tempo total<strong>${fmtTotal(r.minutes)}</strong></span></li>
@@ -527,7 +530,7 @@
             ${f !== 1 ? `<p class="scaled-note">Quantidades ajustadas de ${r.serves} para ${n} porções. <button type="button" class="link-btn" data-serv-reset>Voltar ao original</button></p>` : `<p class="scaled-note">Xícara de 240 ml · colheres medidoras rasas.</p>`}
             <div class="ing-cols${r.groups.length > 1 ? " multi" : ""}">${r.groups.map((g, gi) => `<div class="ing-group">${g.name ? `<h3>${esc(g.name)}</h3>` : ''}<ul>${g.items.map((it, ii) => `<li><label><input type="checkbox" data-check="${gi}-${ii}"><span>${esc(scaleItem(it, f))}</span></label></li>`).join('')}</ul></div>`).join('')}</div>
             ${r.equipment ? `<p class="equipment"><strong>Na bancada:</strong> ${esc(r.equipment)}</p>` : ''}
-            <button class="btn btn-soft" data-add-list="${r.id}">${ICON.cart} Adicionar à lista de compras</button>
+            <button class="btn btn-soft-wa" data-wa="${r.id}">${ICON.wa} Mandar esta receita pro WhatsApp</button>
           </section>
 
           <section class="box method" aria-labelledby="method-title">
@@ -547,6 +550,16 @@
         </aside>
       </div>
     </div>`;
+  }
+
+  const stripTags = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.trim(); };
+  const credit = f => `Foto: ${esc(stripTags(f.autor) || 'autor desconhecido')} · <a href="${esc(f.fonte)}" target="_blank" rel="noopener">Wikimedia Commons</a> · ${f.licencaUrl ? `<a href="${esc(f.licencaUrl)}" target="_blank" rel="noopener">${esc(f.licenca)}</a>` : esc(f.licenca)}`;
+  function credits() {
+    currentListing = null;
+    const rs = RECIPES.filter(r => r.foto);
+    return `<div class="wrap page">${crumbs([[null, 'Créditos das fotos']])}
+      <header class="page-title"><h1>Créditos das fotos</h1><p>As fotos vêm do Wikimedia Commons, sob licenças livres (Creative Commons ou domínio público), e foram redimensionadas para o site. Obrigado a cada fotógrafo.</p></header>
+      <ul class="credits">${rs.map(r => `<li><a class="credits-thumb" href="#/receita/${r.id}">${art(r, '', r.title)}</a><div><a href="#/receita/${r.id}"><strong>${esc(r.title)}</strong></a><p>${credit(r.foto)}</p></div></li>`).join('')}</ul></div>`;
   }
 
   function notFound() {
@@ -572,6 +585,7 @@
       case 'busca': html = search(arg); title = `Busca: ${arg} · Colher de Prosa`; break;
       case 'favoritas': html = favs(); title = 'Favoritas · Colher de Prosa'; break;
       case 'geladeira': html = fridge(arg); title = 'O que tem na geladeira? · Colher de Prosa'; break;
+      case 'creditos': html = credits(); title = 'Créditos das fotos · Colher de Prosa'; break;
       case 'receita': html = recipePage(arg); title = (BY_ID[arg]?.title || 'Receita') + ' · Colher de Prosa'; break;
       default: html = notFound();
     }
@@ -590,7 +604,7 @@
   }
 
   /* ---------- favoritas ---------- */
-  function toggleFav(id) {
+  function toggleFav(id, silent) {
     favorites.has(id) ? favorites.delete(id) : favorites.add(id);
     store.set('cp-favoritas', [...favorites]);
     const on = favorites.has(id);
@@ -599,53 +613,63 @@
       if (b.classList.contains('fav-btn')) b.setAttribute('aria-label', `${on ? 'Remover das favoritas' : 'Guardar nas favoritas'}: ${BY_ID[id].title}`);
       const label = $('span', b); if (label) label.textContent = on ? 'Guardada' : 'Guardar';
     });
-    toast(on ? 'Guardada nas favoritas.' : 'Removida das favoritas.');
+    if (!silent) toast(on ? 'Guardada nas favoritas.' : 'Removida das favoritas.');
     updateCounts();
     if (lastRoute === '#/favoritas' && !on) route();
   }
   function updateCounts() {
     // Os contadores só aparecem quando há algo guardado.
-    const fc = $('#fav-count'), lc = $('#list-count'), pending = list.filter(x => !x.done).length;
+    const fc = $('#fav-count');
     fc.textContent = favorites.size; fc.hidden = !favorites.size;
-    lc.textContent = pending; lc.hidden = !pending;
   }
 
-  /* ---------- lista de compras ---------- */
-  const drawer = $('#list-drawer');
-  function saveList() { store.set('cp-lista', list); updateCounts(); }
-  function addToList(id) {
-    const r = BY_ID[id], f = servingsFor(r) / r.serves;
-    list = list.filter(x => x.recipe !== id);
-    r.groups.forEach(g => g.items.forEach(it => list.push({ recipe: id, text: scaleItem(it, f), done: false })));
-    saveList();
-    toast(`${r.title}: ${plural(r.count, 'item adicionado', 'itens adicionados')} à lista.`);
+  /* ---------- salvar no WhatsApp ----------
+     O WhatsApp não permite envio sem toque: o site monta a mensagem com a receita
+     (nas porções escolhidas) e abre a conversa pronta; a pessoa só aperta "enviar".
+     Com o número salvo, abre direto na conversa consigo mesma, sem escolher contato. */
+  const fmtPhone = n => { const d = n.replace(/^55/, ''); return d.length >= 10 ? `(${d.slice(0, 2)}) ${d.slice(2, -4)}-${d.slice(-4)}` : n; };
+  function recipeText(r) {
+    const f = servingsFor(r) / r.serves, n = servingsFor(r);
+    const lines = [`*${r.title}*`, `_${r.line}_`, '', `Rende: ${n === r.serves ? r.yield_ : n + (n === 1 ? ' porção' : ' porções')} · Tempo total: ${fmtTotal(r.minutes)}`];
+    if (r.wait && r.wait !== '—') lines.push(`Planeje: ${r.wait}`);
+    lines.push('', '*Ingredientes*');
+    r.groups.forEach(g => { if (g.name) lines.push(`_${g.name}_`); g.items.forEach(it => lines.push('• ' + scaleItem(it, f))); });
+    lines.push('', '*Modo de preparo*');
+    r.steps.forEach((s, i) => lines.push(`${i + 1}. *${s.title}:* ${s.text}`));
+    if (r.finish) lines.push('', `*Para servir:* ${r.finish}`);
+    lines.push('', `*Dica:* ${r.tip}`, '', `Receita completa no Colher de Prosa: ${location.origin}${location.pathname}#/receita/${r.id}`);
+    return lines.join('\n');
   }
-  function renderList() {
-    const body = $('#list-body'), foot = $('#list-foot');
-    if (!list.length) {
-      body.innerHTML = `<div class="empty soft"><h3>Sua lista está vazia.</h3><p>Na página de uma receita, toque em “Adicionar à lista de compras”. As quantidades seguem as porções que você escolheu.</p></div>`;
-      foot.innerHTML = ''; return;
-    }
-    const ids = [...new Set(list.map(x => x.recipe))];
-    body.innerHTML = ids.map(id => `<section class="list-group"><div class="list-group-head"><a href="#/receita/${id}" data-close-link>${esc(BY_ID[id].title)}</a><button class="link-btn" data-remove-recipe="${id}">Remover</button></div>
-      <ul>${list.map((x, i) => x.recipe === id ? `<li><label><input type="checkbox" data-list-item="${i}"${x.done ? ' checked' : ''}><span>${esc(x.text)}</span></label></li>` : '').join('')}</ul></section>`).join('');
-    foot.innerHTML = `<button class="btn" data-copy-list>Copiar lista</button><button class="btn btn-ghost" data-clear-done>Limpar comprados</button><button class="link-btn" data-clear-list>Esvaziar</button>`;
+  function sendWhatsApp(r, number) {
+    const url = (number ? `https://wa.me/${number}` : 'https://wa.me/') + '?text=' + encodeURIComponent(recipeText(r));
+    window.open(url, '_blank', 'noopener');
+    if (!favorites.has(r.id)) toggleFav(r.id, true);
+    toast('Receita guardada nas favoritas e pronta no WhatsApp. É só tocar em enviar.');
   }
-  function openList() { closeMega(true); renderList(); drawer.showModal(); document.body.classList.add('locked'); hoist(); }
-  drawer.addEventListener('close', () => { document.body.classList.remove('locked'); hoist(); });
-  drawer.addEventListener('click', e => {
-    if (e.target === drawer || e.target.closest('[data-close]') || e.target.closest('[data-close-link]')) { drawer.close(); return; }
-    const rm = e.target.closest('[data-remove-recipe]');
-    if (rm) { list = list.filter(x => x.recipe !== rm.dataset.removeRecipe); saveList(); renderList(); return; }
-    if (e.target.closest('[data-clear-done]')) { list = list.filter(x => !x.done); saveList(); renderList(); return; }
-    if (e.target.closest('[data-clear-list]')) { if (confirm('Esvaziar toda a lista de compras?')) { list = []; saveList(); renderList(); } return; }
-    if (e.target.closest('[data-copy-list]')) {
-      const ids = [...new Set(list.map(x => x.recipe))];
-      const text = 'Lista de compras · Colher de Prosa\n\n' + ids.map(id => BY_ID[id].title + '\n' + list.filter(x => x.recipe === id).map(x => `${x.done ? '☑' : '☐'} ${x.text}`).join('\n')).join('\n\n');
-      (navigator.clipboard?.writeText(text) || Promise.reject()).then(() => toast('Lista copiada. É só colar no WhatsApp ou nas notas.'), () => toast('Não foi possível copiar neste navegador.'));
-    }
+  const waDialog = $('#wa-dialog');
+  let waRecipe = null;
+  function askWhatsApp(r) {
+    waRecipe = r;
+    $('#wa-number').value = waNumber ? fmtPhone(waNumber) : '';
+    $('#wa-error').hidden = true;
+    waDialog.showModal(); document.body.classList.add('locked'); hoist();
+    $('#wa-number').focus();
+  }
+  waDialog.addEventListener('close', () => { document.body.classList.remove('locked'); hoist(); });
+  waDialog.addEventListener('click', e => {
+    if (e.target === waDialog || e.target.closest('[data-close]')) return waDialog.close();
+    if (e.target.closest('[data-wa-any]')) { waDialog.close(); if (waRecipe) sendWhatsApp(waRecipe, ''); }
   });
-  drawer.addEventListener('change', e => { const i = e.target.dataset.listItem; if (i !== undefined) { list[i].done = e.target.checked; saveList(); } });
+  $('#wa-form').addEventListener('submit', e => {
+    e.preventDefault();
+    let d = $('#wa-number').value.replace(/\D/g, '');
+    if (d.length === 10 || d.length === 11) d = '55' + d;
+    if (d.length < 12 || d.length > 13) { $('#wa-error').hidden = false; $('#wa-number').focus(); return; }
+    if ($('#wa-remember').checked) { waNumber = d; store.set('cp-whatsapp', d); }
+    waDialog.close();
+    if (waRecipe) sendWhatsApp(waRecipe, d); else toast('Número salvo.');
+    const y = window.scrollY; route(); window.scrollTo(0, y);
+  });
 
   /* ---------- cronômetros (seguem visíveis em qualquer tela) ---------- */
   const timers = [];
@@ -734,7 +758,9 @@
   document.addEventListener('click', e => {
     const fav = e.target.closest('[data-fav]');
     if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav); return; }
-    if (e.target.closest('[data-open-list]') || e.target.closest('#open-list')) { openList(); return; }
+    const wa = e.target.closest('[data-wa]');
+    if (wa) { const r = BY_ID[wa.dataset.wa]; if (waNumber) sendWhatsApp(r, waNumber); else askWhatsApp(r); return; }
+    if (e.target.closest('[data-wa-change]')) { waRecipe = BY_ID[location.hash.split('/')[2]] || null; askWhatsApp(waRecipe); return; }
     const serv = e.target.closest('[data-serv]'), reset = e.target.closest('[data-serv-reset]');
     if (serv || reset) {
       const id = location.hash.split('/')[2], r = BY_ID[id]; if (!r) return;
@@ -748,8 +774,6 @@
       (serv ? $(`[data-serv="${serv.dataset.serv}"]:not([disabled])`, app) || $('[data-serv]:not([disabled])', app) : $('[data-serv="1"]', app))?.focus();
       return;
     }
-    const add = e.target.closest('[data-add-list]');
-    if (add) { addToList(add.dataset.addList); return; }
     const ck = e.target.closest('[data-cook]');
     if (ck) { openCook(ck.dataset.cook); return; }
     if (e.target.closest('[data-print]')) { window.print(); return; }
