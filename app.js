@@ -273,7 +273,8 @@
     return `<a class="mini" href="#/receita/${r.id}" style="--tone:${c.tone};--cink:${c.ink}"><span class="mini-art">${art(r)}</span><span class="mini-copy"><span class="tag">${esc(c.name)}</span><strong>${esc(r.title)}</strong></span></a>`;
   }
   const grid = (rs, cls = '') => `<div class="grid ${cls}">${rs.map(card).join('')}</div>`;
-  const daily = (arr, n, salt = '') => { const rnd = seeded(new Date().toDateString() + salt); return [...arr].sort(() => rnd() - 0.5).slice(0, n); };
+  // Sorteio do dia, dando preferência às receitas que já têm foto.
+  const daily = (arr, n, salt = '') => { const rnd = seeded(new Date().toDateString() + salt); return [...arr].map(r => [r, rnd()]).sort((a, b) => (!!b[0].photo - !!a[0].photo) || a[1] - b[1]).map(x => x[0]).slice(0, n); };
 
   /* ---------- navegação de categorias + mega menu ---------- */
   const nav = $('#catnav'), mega = $('#mega'), navList = $('#catnav-list');
@@ -405,7 +406,7 @@
     </section>
 
     <section class="wrap round-cats" aria-label="Categorias">
-      ${CATS.map(c => { const rs = inCat(c.key); return `<a href="#/categoria/${c.key}" style="--tone:${c.tone}"><span class="round">${art(rs[1] || rs[0])}</span><span>${esc(c.name)}</span></a>`; }).join('')}
+      ${CATS.map(c => { const rs = inCat(c.key); return `<a href="#/categoria/${c.key}" style="--tone:${c.tone}"><span class="round">${art(rs.find(r => r.photo) || rs[0])}</span><span>${esc(c.name)}</span></a>`; }).join('')}
     </section>
 
     <div class="wrap home-cols">
@@ -419,7 +420,7 @@
       </div>
       <aside class="home-side">
         <div class="side-box"><h2>Coleções</h2><ul class="coll-list">${COLLECTIONS.map(c => `<li><a href="#/colecao/${c.key}"><strong>${esc(c.name)}</strong><span>${esc(c.desc)}</span></a></li>`).join('')}</ul></div>
-        ${s ? `<a class="side-season" href="#/categoria/${s.key}" style="--tone:${CAT[s.key].tone}"><span class="side-season-art">${art(inCat(s.key)[0])}</span><strong>${s.title}</strong><span>${s.desc}</span><em>Ver a ceia completa ${ICON.arrow}</em></a>` : ''}
+        ${s ? `<a class="side-season" href="#/categoria/${s.key}" style="--tone:${CAT[s.key].tone}"><span class="side-season-art">${art(inCat(s.key).find(r => r.photo) || inCat(s.key)[0])}</span><strong>${s.title}</strong><span>${s.desc}</span><em>Ver a ceia completa ${ICON.arrow}</em></a>` : ''}
         <div class="side-box side-tools">
           <a href="#/favoritas">${ICON.heart}<span><strong>Minhas favoritas</strong>Toque no coração para guardar receitas.</span></a>
         </div>
