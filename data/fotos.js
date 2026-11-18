@@ -14,6 +14,13 @@ window.FOTOS = {
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Brigadeiro.jpg"
  },
+ "pave": {
+  "src": "assets/fotos/pave.jpg",
+  "autor": "Avelludo",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Pav%C3%AA_de_chocolate_2.png"
+ },
  "mousse": {
   "src": "assets/fotos/mousse.jpg",
   "autor": "Melsj",
@@ -90,6 +97,13 @@ window.FOTOS = {
   "licenca": "CC BY 2.0",
   "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Fettuccine_Alfredo.jpg"
+ },
+ "penne-quatro-queijos": {
+  "src": "assets/fotos/penne-quatro-queijos.jpg",
+  "autor": "BrokenSphere",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Chicken_penne_alfredo.JPG"
  },
  "canelone-ricota": {
   "src": "assets/fotos/canelone-ricota.jpg",
@@ -217,6 +231,13 @@ window.FOTOS = {
   "licencaUrl": "",
   "fonte": "https://commons.wikimedia.org/wiki/File:PabloRegino_Gastronomia_Empadao_Goiano_CaldasNovas_GO_(25992081797).jpg"
  },
+ "torta-holandesa": {
+  "src": "assets/fotos/torta-holandesa.jpg",
+  "autor": "Silvia Leite",
+  "licenca": "CC BY-SA 4.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Silvialeite-com-br-creative-commons-4-sa.jpg"
+ },
  "bolo-coco-gelado": {
   "src": "assets/fotos/bolo-coco-gelado.jpg",
   "autor": "Mídia NINJA",
@@ -230,6 +251,13 @@ window.FOTOS = {
   "licenca": "CC BY 2.0",
   "licencaUrl": "https://creativecommons.org/licenses/by/2.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Roast_turkey_from_fall_season.jpg"
+ },
+ "tender-abacaxi": {
+  "src": "assets/fotos/tender-abacaxi.jpg",
+  "autor": "Tim Dawson from Kaukapakapa, Auckland, New Zealand",
+  "licenca": "CC BY-SA 2.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Glazed_Christmas_ham_with_orange_slices_1.jpg"
  },
  "lombo-mostarda": {
   "src": "assets/fotos/lombo-mostarda.jpg",
@@ -300,6 +328,13 @@ window.FOTOS = {
   "licenca": "CC BY-SA 4.0",
   "licencaUrl": "https://creativecommons.org/licenses/by-sa/4.0",
   "fonte": "https://commons.wikimedia.org/wiki/File:Bolinho_de_Bacalhau.jpg"
+ },
+ "arroz-bacalhau": {
+  "src": "assets/fotos/arroz-bacalhau.jpg",
+  "autor": "Mgclape",
+  "licenca": "CC BY-SA 3.0",
+  "licencaUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+  "fonte": "https://commons.wikimedia.org/wiki/File:Arros_bacalla.jpg"
  },
  "pescada-legumes": {
   "src": "assets/fotos/pescada-legumes.jpg",
