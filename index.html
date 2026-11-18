@@ -1,12 +1,79 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0c0c0e"><meta name="description" content="Sobremesas brasileiras em clima de competição: escolha a prova, ligue o cronômetro e capriche no empratamento."><title>Colher de Prosa — Mãos na massa. O tempo está valendo.</title><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><script src="recipes.js" defer></script><script src="app.js" defer></script></head><body>
-<a class="skip" href="#caderno">Pular para as receitas</a>
-<div class="top-strip">A cozinha está aberta <span aria-hidden="true">●</span> O tempo está correndo</div>
-<header class="site-header"><a class="brand" href="#inicio" aria-label="Colher de Prosa, início"><span class="brand-symbol" aria-hidden="true">CP</span><span>Colher <i>de</i> Prosa<small>A COZINHA É A SUA ARENA</small></span></a><nav aria-label="Navegação principal"><a href="#caderno">As provas</a><a href="#segredinhos">Regras da bancada</a><button id="saved-nav" class="text-button">Minhas favoritas <span id="saved-count">0</span></button></nav></header>
-<main id="inicio"><section class="hero"><div class="hero-copy"><p class="eyebrow"><span></span> TEMPORADA DE SOBREMESAS · 11 PROVAS</p><h1>Mãos na massa.<br><em>O tempo está valendo.</em></h1><p class="intro">Avental no corpo, bancada limpa, fogo aceso.</p><p class="hero-description">Escolha a sua prova, ligue o cronômetro e entregue um prato digno de final.</p><a class="button" href="#caderno">Escolher minha prova <span aria-hidden="true">↗</span></a><span class="hand-note">Sem eliminação: aqui todo mundo repete o prato.</span></div><div class="hero-visual"><img src="assets/bombom.webp" alt="Bombom de morango na travessa, com camadas de creme e chocolate e morangos frescos" width="1200" height="800" fetchpriority="high"><div class="seal">PRATO<br>DE<br><i>final</i></div><button class="hero-caption" data-open="bombom"><span><small>A SOBREMESA DA GRANDE FINAL</small><strong>Bombom de morango</strong></span><span class="round-arrow" aria-hidden="true">↗</span></button></div></section>
-<div class="ribbon" aria-hidden="true"><span>MÃOS NA MASSA</span><span>✦</span><span>O TEMPO ESTÁ CORRENDO</span><span>✦</span><span>HORA DE EMPRATAR</span></div>
-<section class="collection section" id="caderno"><div class="section-heading"><div><p class="eyebrow">ESCOLHA A SUA PROVA</p><h2>Onze sobremesas.<br><em>Uma bancada: a sua.</em></h2></div><p>Do pudim de domingo ao brigadeiro que nem espera a festa. Clássicos brasileiros para encarar com técnica e capricho.</p></div><div class="collection-tools"><div class="filters" role="group" aria-label="Filtrar receitas"><button class="filter active" data-category="Todas" aria-pressed="true">Todas as provas</button><button class="filter" data-category="Geladinhas" aria-pressed="false">Geladinhas</button><button class="filter" data-category="De forno" aria-pressed="false">De forno</button><button class="filter" data-category="Da panela" aria-pressed="false">Da panela</button><button class="filter" data-category="Favoritas" aria-pressed="false">♡ Favoritas</button></div><label class="search"><span class="sr-only">Buscar por receita ou ingrediente</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Buscar receita ou ingrediente" autocomplete="off"></label></div><p id="results-status" class="results-status" role="status"></p><div id="recipes-grid" class="recipe-grid"></div><div id="empty" class="empty" hidden><h3>Essa prova ainda não entrou na temporada.</h3><p>Tente outro ingrediente ou volte a ver todas as receitas.</p><button class="button" id="clear-filters">Ver todas as provas</button></div><noscript>Ative o JavaScript para consultar as receitas.</noscript></section>
-<section class="kitchen-notes section" id="segredinhos"><div class="notes-title"><p class="eyebrow">REGRAS DA BANCADA</p><h2>Três regras.<br><em>Nenhuma desculpa.</em></h2></div><div class="note"><span class="note-symbol" aria-hidden="true">01</span><h3>Precisão é <br>técnica.</h3><p>Use uma xícara de 240 ml e colheres medidoras. Quando houver peso em gramas, a balança ajuda a repetir o resultado.</p></div><div class="note"><span class="note-symbol" aria-hidden="true">02</span><h3>Leia a prova <br>até o fim.</h3><p>Cremes, mousses e pudins precisam de tempo para firmar. Confira o tempo de descanso antes de ligar o cronômetro.</p></div><div class="note"><span class="note-symbol" aria-hidden="true">03</span><h3>O ponto manda <br>mais que o relógio.</h3><p>Fogões, fornos e panelas variam. Observe a textura indicada na receita: o tempo é um guia, não uma promessa.</p></div></section>
-<section class="closing"><p class="eyebrow">TEMPO ESGOTADO</p><h2>Mãos para cima.<br><em>Hora de empratar.</em></h2><p>O veredito que importa é o de quem está<br>do outro lado da mesa. Sirva e reparta.</p><a href="#caderno" class="button">Encarar outra prova <span aria-hidden="true">↑</span></a></section></main>
-<footer class="site-footer"><a class="brand" href="#inicio">Colher <i>de</i> Prosa</a><p>Receitas de casa, em clima de competição.</p><p class="fine-print">Site independente, sem vínculo com programas de TV ou emissoras. Fotos ilustrativas geradas por IA. Tempos e rendimentos aproximados. Receitas não testadas em cozinha nesta produção. Confira os ingredientes em caso de restrições alimentares.</p></footer>
-<dialog id="recipe-dialog" aria-labelledby="recipe-title"><div class="dialog-toolbar"><a href="#caderno" id="back-recipe" class="text-button">← Voltar às provas</a><div><button id="favorite-recipe" class="icon-button" aria-pressed="false">♡ Guardar</button><button id="print-recipe" class="icon-button">Imprimir</button><button id="close-recipe" class="close-button" aria-label="Fechar receita">×</button></div></div><article id="recipe-content"></article></dialog><div class="toast" id="toast" role="status" hidden></div>
-</body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#FAF6EF">
+<meta name="description" content="Colher de Prosa: receitas brasileiras organizadas com cuidado. Medidas claras, porções que se ajustam, lista de compras e modo cozinhar.">
+<title>Colher de Prosa · Receitas de casa, com tempo para a prosa</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script src="data/classicos.js" defer></script>
+<script src="data/massas.js" defer></script>
+<script src="data/bebidas.js" defer></script>
+<script src="data/bolos.js" defer></script>
+<script src="data/natal.js" defer></script>
+<script src="data/pascoa.js" defer></script>
+<script src="data/carnes.js" defer></script>
+<script src="data/aves.js" defer></script>
+<script src="data/saladas.js" defer></script>
+<script src="data/doces.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#app">Pular para o conteúdo</a>
+
+<div class="strip"><p>Receitas brasileiras, medidas claras e nenhum pop-up no meio do modo de preparo.</p></div>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="logo" href="#/" aria-label="Colher de Prosa, página inicial">
+      <svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M38 34 L50 52" class="logo-handle"/><path d="M14 24c0-8 7-13 16-13s16 5 16 13-7 13-16 13c-2 0-4 0-6-1l-7 4 2-6c-3-2-5-6-5-10z" class="logo-bowl"/><circle cx="24" cy="24" r="2"/><circle cx="30" cy="24" r="2"/><circle cx="36" cy="24" r="2"/></svg>
+      <span class="logo-word"><span class="logo-a">Colher</span> <em>de</em> <span class="logo-b">Prosa</span></span>
+    </a>
+    <form class="search" role="search" id="search-form">
+      <label class="sr-only" for="search">Buscar receitas por nome ou ingrediente</label>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+      <input id="search" type="search" placeholder="Buscar receita ou ingrediente" autocomplete="off" enterkeyhint="search">
+      <kbd aria-hidden="true">/</kbd>
+    </form>
+    <div class="masthead-actions">
+      <a href="#/favoritas" class="pill-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Favoritas</span><span class="count" id="fav-count">0</span></a>
+      <button type="button" class="pill-link" id="open-list"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7h13l-1.5 9h-10z"/><path d="M6 7 5 4H3"/><circle cx="9" cy="20" r="1.3"/><circle cx="16" cy="20" r="1.3"/></svg><span>Lista de compras</span><span class="count" id="list-count">0</span></button>
+    </div>
+  </div>
+  <nav class="catnav" id="catnav" aria-label="Categorias de receitas">
+    <ul class="catnav-list" id="catnav-list"></ul>
+    <div class="mega" id="mega" hidden></div>
+  </nav>
+</header>
+
+<main id="app" tabindex="-1"></main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <a class="logo logo-small" href="#/"><span class="logo-word"><span class="logo-a">Colher</span> <em>de</em> <span class="logo-b">Prosa</span></span></a>
+      <p>Um caderno de receitas brasileiras para cozinhar com calma e servir com conversa.</p>
+    </div>
+    <nav aria-label="Rodapé" class="footer-links" id="footer-links"></nav>
+    <p class="fine">Projeto independente em fase inicial. As ilustrações substituem fotografias até a produção do ensaio fotográfico. Tempos, rendimentos e conversões de porção são aproximados; confira os ingredientes em caso de alergias ou restrições alimentares.</p>
+  </div>
+</footer>
+
+<dialog class="drawer" id="list-drawer" aria-labelledby="list-title">
+  <div class="drawer-head"><h2 id="list-title">Lista de compras</h2><button class="icon-btn" data-close aria-label="Fechar lista">×</button></div>
+  <div class="drawer-body" id="list-body"></div>
+  <div class="drawer-foot" id="list-foot"></div>
+</dialog>
+
+<dialog class="cook" id="cook" aria-labelledby="cook-title"></dialog>
+
+<div class="timers" id="timers" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<noscript><p class="noscript">Ative o JavaScript para navegar pelas receitas.</p></noscript>
+</body>
+</html>
