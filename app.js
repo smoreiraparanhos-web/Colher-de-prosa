@@ -256,54 +256,50 @@
     toastTimer = setTimeout(() => { t.hidden = true; }, 2800);
   }
 
-  /* ---------- cartões ---------- */
-  function card(r, opts = {}) {
-    const c = CAT[r.category], fav = favorites.has(r.id);
+  /* ---------- cartões (sem tempo e sem numeração: esses dados aparecem só na receita aberta) ---------- */
+  const favBtn = r => { const on = favorites.has(r.id); return `<button class="fav-btn" data-fav="${r.id}" aria-pressed="${on}" aria-label="${on ? 'Remover das favoritas' : 'Guardar nas favoritas'}: ${esc(r.title)}">${ICON.heart}</button>`; };
+  function card(r) {
+    const c = CAT[r.category];
     return `<article class="card" style="--tone:${c.tone};--cink:${c.ink}">
       <a class="card-link" href="#/receita/${r.id}">
-        <div class="card-art">${art(r)}${opts.badge ? `<span class="card-badge">${esc(opts.badge)}</span>` : ''}</div>
-        <div class="card-body">
-          <span class="card-cat"><i style="background:${c.ink}"></i>${esc(c.name)}</span>
-          <h3>${esc(r.title)}</h3>
-          <p>${esc(r.line)}</p>
-          <div class="card-meta"><span>${ICON.clock}${fmtTotal(r.minutes)}</span><span>${ICON.people}${esc(r.yield_)}</span><span>${ICON.flame}${r.level}</span></div>
-        </div>
-      </a>
-      <button class="fav-btn" data-fav="${r.id}" aria-pressed="${fav}" aria-label="${fav ? 'Remover das favoritas' : 'Guardar nas favoritas'}: ${esc(r.title)}">${ICON.heart}</button>
-    </article>`;
+        <div class="card-art">${art(r)}</div>
+        <div class="card-body"><span class="tag">${esc(c.name)}</span><h3>${esc(r.title)}</h3></div>
+      </a>${favBtn(r)}</article>`;
   }
-  const grid = (rs, opts) => `<div class="grid">${rs.map(r => card(r, opts && opts(r))).join('')}</div>`;
+  function mini(r) {
+    const c = CAT[r.category];
+    return `<a class="mini" href="#/receita/${r.id}" style="--tone:${c.tone};--cink:${c.ink}"><span class="mini-art">${art(r)}</span><span class="mini-copy"><span class="tag">${esc(c.name)}</span><strong>${esc(r.title)}</strong></span></a>`;
+  }
+  const grid = (rs, cls = '') => `<div class="grid ${cls}">${rs.map(card).join('')}</div>`;
+  const daily = (arr, n, salt = '') => { const rnd = seeded(new Date().toDateString() + salt); return [...arr].sort(() => rnd() - 0.5).slice(0, n); };
 
   /* ---------- navegação de categorias + mega menu ---------- */
   const nav = $('#catnav'), mega = $('#mega'), navList = $('#catnav-list');
-  navList.innerHTML = CATS.map(c => `<li><a class="catnav-link" href="#/categoria/${c.key}" data-mega="${c.key}" aria-expanded="false" aria-controls="mega"><i style="background:${c.ink}"></i>${esc(c.name)}</a></li>`).join('')
+  navList.innerHTML = CATS.map(c => `<li><a class="catnav-link" href="#/categoria/${c.key}" data-mega="${c.key}" aria-expanded="false" aria-controls="mega">${esc(c.name)}</a></li>`).join('')
     + `<li><a class="catnav-link more" href="#/receitas" data-mega="mais" aria-expanded="false" aria-controls="mega">E muito mais<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></a></li>`;
   $('#footer-links').innerHTML = CATS.map(c => `<a href="#/categoria/${c.key}">${esc(c.name)}</a>`).join('') + COLLECTIONS.map(c => `<a href="#/colecao/${c.key}">${esc(c.name)}</a>`).join('');
 
   let megaKey = null, openTimer, closeTimer;
   function preview(r) {
     const c = CAT[r.category];
-    return `<a class="mega-preview" href="#/receita/${r.id}" style="--tone:${c.tone}" tabindex="-1">
-      <div class="mega-preview-art">${art(r)}</div>
-      <strong>${esc(r.title)}</strong><span>${esc(r.line)}</span>
-      <small>${ICON.clock}${fmtTotal(r.minutes)} · ${esc(r.yield_)} · ${r.level}</small></a>`;
+    return `<a class="mega-preview" href="#/receita/${r.id}" style="--tone:${c.tone}" tabindex="-1"><div class="mega-preview-art">${art(r)}</div><strong>${esc(r.title)}</strong><span>${esc(r.line)}</span></a>`;
   }
   function renderMega(key) {
     if (key === 'mais') {
       mega.innerHTML = `<div class="mega-inner mega-more">
-        <div class="mega-intro"><span class="eyebrow">Coleções</span><h2>E muito mais</h2><p>Atalhos para o jeito como você cozinha de verdade: pouco tempo, sem forno, para congelar ou para receber.</p><a class="text-link" href="#/receitas">Ver todas as ${RECIPES.length} receitas ${ICON.arrow}</a></div>
-        <ul class="mega-collections">${COLLECTIONS.map(c => `<li><a href="#/colecao/${c.key}"><strong>${esc(c.name)}</strong><span>${esc(c.desc)}</span><em>${plural(RECIPES.filter(c.test).length, 'receita', 'receitas')}</em></a></li>`).join('')}</ul>
+        <div class="mega-intro"><h2>E muito mais</h2><p>Atalhos para o jeito como você cozinha de verdade.</p><a class="text-link" href="#/receitas">Ver todas as receitas ${ICON.arrow}</a></div>
+        <ul class="mega-collections">${COLLECTIONS.map(c => `<li><a href="#/colecao/${c.key}"><strong>${esc(c.name)}</strong><span>${esc(c.desc)}</span></a></li>`).join('')}</ul>
         <ul class="mega-tools">
           <li><a href="#/geladeira">${ICON.fridge}<span><strong>O que tem na geladeira?</strong>Digite o que sobrou e veja o que dá para fazer.</span></a></li>
-          <li><a href="#/favoritas">${ICON.heart}<span><strong>Minhas favoritas</strong>${plural(favorites.size, 'receita guardada', 'receitas guardadas')}.</span></a></li>
-          <li><button type="button" data-open-list>${ICON.cart}<span><strong>Lista de compras</strong>${plural(list.length, 'item', 'itens')} na lista.</span></button></li>
+          <li><a href="#/favoritas">${ICON.heart}<span><strong>Minhas favoritas</strong>As receitas que você guardou.</span></a></li>
+          <li><button type="button" data-open-list>${ICON.cart}<span><strong>Lista de compras</strong>Ingredientes das receitas que você vai fazer.</span></button></li>
         </ul></div>`;
       return;
     }
     const c = CAT[key], rs = inCat(key);
     mega.innerHTML = `<div class="mega-inner" style="--tone:${c.tone};--cink:${c.ink}">
-      <div class="mega-intro"><span class="eyebrow">Categoria</span><h2>${esc(c.name)}</h2><p>${esc(c.desc)}</p><a class="text-link" href="#/categoria/${key}">Ver as ${rs.length} receitas ${ICON.arrow}</a></div>
-      <ol class="mega-list">${rs.map((r, i) => `<li><a href="#/receita/${r.id}" data-preview="${r.id}"${i === 0 ? ' class="is-active"' : ''}><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="t">${esc(r.title)}</span><span class="m">${fmtTotal(r.minutes)}</span></a></li>`).join('')}</ol>
+      <div class="mega-intro"><h2>${esc(c.name)}</h2><p>${esc(c.desc)}</p><a class="text-link" href="#/categoria/${key}">Ver todas ${ICON.arrow}</a></div>
+      <ul class="mega-list">${rs.map((r, i) => `<li><a href="#/receita/${r.id}" data-preview="${r.id}"${i === 0 ? ' class="is-active"' : ''}>${esc(r.title)}</a></li>`).join('')}</ul>
       <div class="mega-side" id="mega-side">${preview(rs[0])}</div></div>`;
   }
   function openMega(key) {
@@ -346,201 +342,216 @@
   /* ---------- telas ---------- */
   const app = $('#app');
   const filters = { rapidas: false, veg: false, semforno: false, facil: false, sort: 'casa' };
+  let currentListing = null;
 
-  function listingTools(rs) {
-    const chip = (k, label) => `<button class="chip" data-filter="${k}" aria-pressed="${filters[k]}">${label}</button>`;
-    return `<div class="tools"><div class="chips" role="group" aria-label="Filtrar">${chip('rapidas', 'Até 30 min')}${chip('veg', 'Vegetarianas')}${chip('semforno', 'Sem forno')}${chip('facil', 'Fácil')}</div>
-      <label class="sort">Ordenar <select data-sort><option value="casa"${filters.sort === 'casa' ? ' selected' : ''}>Ordem da casa</option><option value="tempo"${filters.sort === 'tempo' ? ' selected' : ''}>Mais rápidas</option><option value="ingredientes"${filters.sort === 'ingredientes' ? ' selected' : ''}>Menos ingredientes</option></select></label></div>
-      <p class="results" role="status">${resultsText(applyFilters(rs).length, rs.length)}</p>`;
-  }
   function applyFilters(rs) {
     let out = rs.filter(r => (!filters.rapidas || r.minutes <= 30) && (!filters.veg || r.tags.includes('vegetariana')) && (!filters.semforno || r.tags.includes('sem-forno')) && (!filters.facil || r.level === 'Fácil'));
-    if (filters.sort === 'tempo') out = [...out].sort((a, b) => a.minutes - b.minutes);
+    if (filters.sort === 'az') out = [...out].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'));
     if (filters.sort === 'ingredientes') out = [...out].sort((a, b) => a.count - b.count);
     return out;
   }
-  const resultsText = (n, total) => n === total ? plural(n, 'receita', 'receitas') : `${n} de ${plural(total, 'receita', 'receitas')}`;
-  function listing(rs, emptyHtml) {
-    const found = applyFilters(rs);
-    return `<div data-listing>${listingTools(rs)}${found.length ? grid(found) : emptyHtml || `<div class="empty"><h3>Nenhuma receita com esses filtros.</h3><p>Tire um dos filtros para ver mais opções.</p></div>`}</div>`;
+  const noResults = `<div class="empty"><h3>Nenhuma receita com esses filtros.</h3><p>Desmarque um dos filtros para ver mais opções.</p></div>`;
+  function listingGrid(rs, emptyHtml) { const found = applyFilters(rs); return found.length ? grid(found, 'grid-3') : (emptyHtml || noResults); }
+  function refreshListing() { const box = $('[data-listing]', app); if (box && currentListing) box.innerHTML = listingGrid(currentListing); }
+
+  const crumbs = items => `<nav class="crumbs" aria-label="Você está em"><a href="#/">Início</a>${items.map(([href, label]) => href ? `<a href="${href}">${esc(label)}</a>` : `<span aria-current="page">${esc(label)}</span>`).join('')}</nav>`;
+  function filterSide(activeCat) {
+    const box = (k, label) => `<label class="check"><input type="checkbox" data-filter="${k}"${filters[k] ? ' checked' : ''}><span>${label}</span></label>`;
+    return `<aside class="side">
+      <div class="side-box"><h2>Filtrar</h2>${box('rapidas', 'Prontas em até 30 min')}${box('veg', 'Vegetarianas')}${box('semforno', 'Sem forno')}${box('facil', 'Fáceis')}</div>
+      <div class="side-box side-cats"><h2>Categorias</h2><ul>${CATS.map(c => `<li><a href="#/categoria/${c.key}"${c.key === activeCat ? ' aria-current="page"' : ''} style="--cink:${c.ink}"><i></i>${esc(c.name)}</a></li>`).join('')}</ul></div>
+      <a class="side-promo" href="#/geladeira">${ICON.fridge}<span><strong>O que tem na geladeira?</strong>Diga o que sobrou e veja o que dá para fazer.</span></a>
+    </aside>`;
   }
-  let currentListing = null;
-  function refreshListing() {
-    const box = $('[data-listing]', app); if (!box || !currentListing) return;
-    const focused = document.activeElement?.dataset?.filter;
-    box.outerHTML = listing(currentListing);
-    if (focused) $(`[data-filter="${focused}"]`, app)?.focus(); else if (document.activeElement === document.body) $('[data-sort]', app)?.focus();
+  function listingPage({ trail, title, desc, rs, activeCat, emptyHtml, tone }) {
+    currentListing = rs;
+    return `<div class="wrap page">${crumbs(trail)}
+      <header class="page-title"${tone ? ` style="--tone:${tone}"` : ''}><h1>${title}</h1>${desc ? `<p>${desc}</p>` : ''}</header>
+      <div class="list-layout">${filterSide(activeCat)}
+        <div class="list-main">
+          <div class="list-top"><label class="sort">Ordenar por <select data-sort>
+            <option value="casa"${filters.sort === 'casa' ? ' selected' : ''}>Destaques</option>
+            <option value="az"${filters.sort === 'az' ? ' selected' : ''}>Nome (A–Z)</option>
+            <option value="ingredientes"${filters.sort === 'ingredientes' ? ' selected' : ''}>Menos ingredientes</option></select></label></div>
+          <div data-listing>${rs.length ? listingGrid(rs) : emptyHtml}</div>
+        </div>
+      </div></div>`;
   }
 
-  function pageHead({ eyebrow, title, desc, tone, ink, crumbs }) {
-    return `<header class="page-head" style="--tone:${tone || '#F3EBDD'};--cink:${ink || '#A35A43'}">
-      <div class="wrap">${crumbs ? `<nav class="crumbs" aria-label="Você está em"><a href="#/">Início</a>${crumbs}</nav>` : ''}
-      <span class="eyebrow">${eyebrow}</span><h1>${title}</h1>${desc ? `<p>${desc}</p>` : ''}</div></header>`;
-  }
-
-  function weekly() {
-    const week = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 1)) / 6048e5);
-    const pool = RECIPES.filter(r => r.minutes <= 240);
-    return pool[week % pool.length];
-  }
   function season() {
     const m = new Date().getMonth();
     if (m >= 10) return { key: 'natal', title: 'O Natal está chegando', desc: 'Monte o cardápio da ceia com antecedência: dá tempo de testar antes do dia.' };
-    if (m >= 1 && m <= 3) return { key: 'pascoa', title: 'Para a mesa de Páscoa', desc: 'Bacalhau, cordeiro e chocolate, com tempo de dessalga já calculado.' };
+    if (m >= 1 && m <= 3) return { key: 'pascoa', title: 'Para a mesa de Páscoa', desc: 'Bacalhau, cordeiro e chocolate para o almoço de domingo.' };
     return null;
   }
 
   function home() {
-    const w = weekly(), s = season(), quick = RECIPES.filter(r => r.minutes <= 30);
-    const pick = arr => { const rnd = seeded(new Date().toDateString()); return [...arr].sort(() => rnd() - 0.5).slice(0, 4); };
+    currentListing = null;
+    const s = season();
+    const slides = [...(s ? daily(inCat(s.key), 1, 's') : []), ...daily(RECIPES.filter(r => !s || r.category !== s.key), s ? 3 : 4, 'c')];
+    const highlights = daily(RECIPES.filter(r => !slides.includes(r)), 4, 'h');
+    const shelf = c => `<section class="shelf" aria-labelledby="shelf-${c.key}"><div class="shelf-head"><h2 id="shelf-${c.key}"><i style="background:${c.ink}"></i>${esc(c.name)}</h2><a class="text-link" href="#/categoria/${c.key}">Ver todas ${ICON.arrow}</a></div>${grid(daily(inCat(c.key), 4, c.key), 'grid-4')}</section>`;
+    const order = s ? [CAT[s.key], ...CATS.filter(c => c.key !== s.key)] : CATS;
     return `
-    <section class="hero wrap">
-      <div class="hero-copy">
-        <span class="eyebrow">Caderno de receitas brasileiras</span>
-        <h1>Cozinha de casa, com tempo para <em class="nowrap">a prosa</em>.</h1>
-        <p class="lede">${RECIPES.length} receitas organizadas com cuidado: medidas claras, porções que se ajustam e um modo de preparo feito para ler com a mão suja de farinha.</p>
-        <div class="hero-ctas"><a class="btn" href="#/receitas">Explorar receitas ${ICON.arrow}</a><a class="btn btn-ghost" href="#/geladeira">${ICON.fridge} O que tem na geladeira?</a></div>
-        <ul class="hero-facts"><li><strong>${CATS.length}</strong> categorias</li><li><strong>${RECIPES.length}</strong> receitas</li><li><strong>0</strong> pop-ups no modo de preparo</li></ul>
+    <section class="wrap top">
+      <div class="carousel" data-carousel aria-roledescription="carrossel" aria-label="Receitas em destaque">
+        ${slides.map((r, i) => { const c = CAT[r.category]; return `<a class="slide${i === 0 ? ' is-active' : ''}" href="#/receita/${r.id}" style="--tone:${c.tone};--cink:${c.ink}" aria-roledescription="slide"${i ? ' aria-hidden="true" tabindex="-1"' : ''}>
+          <span class="slide-art">${art(r, 'big')}</span>
+          <span class="slide-copy"><span class="tag">${esc(i === 0 && s ? s.title : c.name)}</span><strong>${esc(r.title)}</strong><span>${esc(r.line)}</span><em class="btn">Ver receita ${ICON.arrow}</em></span></a>`; }).join('')}
+        <div class="carousel-ctrl"><button type="button" data-slide="-1" aria-label="Destaque anterior">‹</button><div class="dots">${slides.map((_, i) => `<button type="button" data-dot="${i}" aria-label="Ir para o destaque ${i + 1}"${i === 0 ? ' aria-current="true"' : ''}></button>`).join('')}</div><button type="button" data-slide="1" aria-label="Próximo destaque">›</button></div>
       </div>
-      <a class="feature" href="#/receita/${w.id}" style="--tone:${CAT[w.category].tone}">
-        <div class="feature-art">${art(w, 'big')}</div>
-        <div class="feature-label"><span class="eyebrow">Receita da semana</span><strong>${esc(w.title)}</strong><span>${esc(w.line)}</span><small>${ICON.clock}${fmtTotal(w.minutes)} · ${esc(w.yield_)}</small></div>
-        <span class="feature-seal" aria-hidden="true">nº ${String(RECIPES.indexOf(w) + 1).padStart(2, '0')}</span>
-      </a>
+      <aside class="top-side"><h2>Destaques de hoje</h2>${highlights.map(mini).join('')}</aside>
     </section>
 
-    <section class="section wrap">
-      <div class="section-head"><div><span class="eyebrow">Por onde começar</span><h2>Nove cadernos, <em>dez receitas</em> em cada um.</h2></div><a class="text-link" href="#/receitas">Ver todas ${ICON.arrow}</a></div>
-      <div class="tiles">${CATS.map(c => { const rs = inCat(c.key); return `<a class="tile" href="#/categoria/${c.key}" style="--tone:${c.tone};--cink:${c.ink}"><div class="tile-art">${art(rs[1] || rs[0])}</div><div class="tile-copy"><strong>${esc(c.name)}</strong><span>${esc(c.desc)}</span><em>${plural(rs.length, 'receita', 'receitas')} ${ICON.arrow}</em></div></a>`; }).join('')}</div>
+    <section class="wrap round-cats" aria-label="Categorias">
+      ${CATS.map(c => { const rs = inCat(c.key); return `<a href="#/categoria/${c.key}" style="--tone:${c.tone}"><span class="round">${art(rs[1] || rs[0])}</span><span>${esc(c.name)}</span></a>`; }).join('')}
     </section>
 
-    <section class="fridge-band"><div class="wrap fridge-inner">
-      <div><span class="eyebrow">Ferramenta</span><h2>O que tem <em>na geladeira?</em></h2><p>Digite o que sobrou e a gente mostra as receitas que aproveitam mais desses ingredientes.</p></div>
-      <form class="fridge-form" data-fridge-form><label class="sr-only" for="fridge-home">Ingredientes, separados por vírgula</label><input id="fridge-home" placeholder="ovo, tomate, queijo…" autocomplete="off"><button class="btn">Ver receitas</button>
-      <div class="fridge-suggest">Experimente: ${['frango, batata', 'leite condensado, coco', 'tomate, manjericão', 'chocolate'].map(x => `<a href="#/geladeira/${encodeURIComponent(x.replace(/\s/g, ''))}">${x}</a>`).join('')}</div></form>
-    </div></section>
-
-    ${s ? `<section class="section wrap"><div class="section-head"><div><span class="eyebrow">Época</span><h2>${s.title}</h2><p>${s.desc}</p></div><a class="text-link" href="#/categoria/${s.key}">Ver a ceia completa ${ICON.arrow}</a></div>${grid(inCat(s.key).slice(0, 4))}</section>` : ''}
-
-    <section class="section wrap"><div class="section-head"><div><span class="eyebrow">Dia de semana</span><h2>Prontas em <em>até 30 minutos</em>.</h2><p>Contando tudo, não só o “mão na massa”.</p></div><a class="text-link" href="#/colecao/rapidas">Ver as ${quick.length} ${ICON.arrow}</a></div>${grid(pick(quick))}</section>
-
-    <section class="principles wrap">
-      <div class="section-head"><div><span class="eyebrow">Como a gente escreve receita</span><h2>Menos “a gosto”, <em>mais ponto certo</em>.</h2></div></div>
-      <div class="principles-grid">
-        <div><span class="p-num">01</span><h3>Medida que se repete</h3><p>Xícara de 240 ml, colher medidora e, sempre que ajuda, o peso em gramas ao lado.</p></div>
-        <div><span class="p-num">02</span><h3>Porção do seu tamanho</h3><p>Mude o rendimento e as quantidades se recalculam. A lista de compras acompanha.</p></div>
-        <div><span class="p-num">03</span><h3>Modo cozinhar</h3><p>Um passo por vez, letra grande, tela acesa e cronômetro a um toque de distância.</p></div>
-        <div><span class="p-num">04</span><h3>O ponto manda</h3><p>Cada passo diz como reconhecer que deu certo. O tempo é um guia, não uma promessa.</p></div>
+    <div class="wrap home-cols">
+      <div class="home-main">
+        ${order.slice(0, 3).map(shelf).join('')}
+        <section class="fridge-band">
+          <div><h2>O que tem na geladeira?</h2><p>Digite o que sobrou e a gente mostra o que dá para fazer.</p></div>
+          <form class="fridge-form" data-fridge-form><label class="sr-only" for="fridge-home">Ingredientes, separados por vírgula</label><input id="fridge-home" placeholder="ovo, tomate, queijo…" autocomplete="off"><button class="btn">Buscar</button></form>
+        </section>
+        ${order.slice(3).map(shelf).join('')}
       </div>
-    </section>`;
+      <aside class="home-side">
+        <div class="side-box"><h2>Coleções</h2><ul class="coll-list">${COLLECTIONS.map(c => `<li><a href="#/colecao/${c.key}"><strong>${esc(c.name)}</strong><span>${esc(c.desc)}</span></a></li>`).join('')}</ul></div>
+        ${s ? `<a class="side-season" href="#/categoria/${s.key}" style="--tone:${CAT[s.key].tone}"><span class="side-season-art">${art(inCat(s.key)[0])}</span><strong>${s.title}</strong><span>${s.desc}</span><em>Ver a ceia completa ${ICON.arrow}</em></a>` : ''}
+        <div class="side-box side-tools">
+          <a href="#/favoritas">${ICON.heart}<span><strong>Minhas favoritas</strong>Toque no coração para guardar receitas.</span></a>
+          <button type="button" data-open-list>${ICON.cart}<span><strong>Lista de compras</strong>Junte os ingredientes das receitas da semana.</span></button>
+        </div>
+      </aside>
+    </div>`;
+  }
+
+  // Carrossel da página inicial: troca sozinho, pausa com o mouse em cima ou com foco dentro.
+  let carouselTimer = null;
+  function initCarousel() {
+    clearInterval(carouselTimer);
+    const root = $('[data-carousel]', app); if (!root) return;
+    const slides = $$('.slide', root), dots = $$('[data-dot]', root);
+    let i = 0, paused = false;
+    const go = n => {
+      i = (n + slides.length) % slides.length;
+      slides.forEach((s, k) => { const on = k === i; s.classList.toggle('is-active', on); s.toggleAttribute('aria-hidden', !on); on ? s.removeAttribute('tabindex') : s.setAttribute('tabindex', '-1'); });
+      dots.forEach((d, k) => d.toggleAttribute('aria-current', k === i));
+    };
+    root.addEventListener('click', e => {
+      const b = e.target.closest('[data-slide]'), d = e.target.closest('[data-dot]');
+      if (b) go(i + +b.dataset.slide); if (d) go(+d.dataset.dot);
+    });
+    root.addEventListener('pointerenter', () => { paused = true; });
+    root.addEventListener('pointerleave', () => { paused = false; });
+    root.addEventListener('focusin', () => { paused = true; });
+    root.addEventListener('focusout', () => { paused = false; });
+    if (!reduceMotion) carouselTimer = setInterval(() => { if (!paused && !document.hidden) go(i + 1); }, 6000);
   }
 
   function category(key) {
     const c = CAT[key]; if (!c) return notFound();
-    currentListing = inCat(key);
-    return pageHead({ eyebrow: 'Categoria', title: esc(c.name), desc: esc(c.desc), tone: c.tone, ink: c.ink, crumbs: `<a href="#/receitas">Receitas</a>` })
-      + `<section class="wrap section-tight">${listing(currentListing)}</section>` + otherCats(key);
-  }
-  function otherCats(except) {
-    return `<section class="wrap section"><div class="section-head"><div><span class="eyebrow">Continue explorando</span><h2>Outros cadernos</h2></div></div><div class="cat-pills">${CATS.filter(c => c.key !== except).map(c => `<a href="#/categoria/${c.key}" style="--tone:${c.tone};--cink:${c.ink}"><i></i>${esc(c.name)}</a>`).join('')}</div></section>`;
+    return listingPage({ trail: [['#/receitas', 'Receitas'], [null, c.name]], title: esc(c.name), desc: esc(c.desc), rs: inCat(key), activeCat: key, tone: c.tone });
   }
   function collection(key) {
     const c = COLL[key]; if (!c) return notFound();
-    currentListing = RECIPES.filter(c.test);
-    return pageHead({ eyebrow: 'Coleção', title: esc(c.name), desc: esc(c.desc), crumbs: `<a href="#/receitas">Receitas</a>` }) + `<section class="wrap section-tight">${listing(currentListing)}</section>`;
+    return listingPage({ trail: [['#/receitas', 'Receitas'], [null, c.name]], title: esc(c.name), desc: esc(c.desc), rs: RECIPES.filter(c.test) });
   }
   function all() {
-    currentListing = RECIPES;
-    return pageHead({ eyebrow: 'Todas as receitas', title: `${RECIPES.length} receitas, <em>nenhuma de enfeite</em>.`, desc: 'Comece pequeno e bem feito: cada receita tem medidas claras, ponto descrito e dica da casa.' })
-      + `<section class="wrap section-tight"><div class="cat-pills cat-pills-top">${CATS.map(c => `<a href="#/categoria/${c.key}" style="--tone:${c.tone};--cink:${c.ink}"><i></i>${esc(c.name)}</a>`).join('')}</div>${listing(currentListing)}</section>`;
+    return listingPage({ trail: [[null, 'Receitas']], title: 'Todas as receitas', desc: 'Massas, carnes, ceias, bolos, doces e muito mais.', rs: RECIPES });
   }
   function search(q) {
     const terms = norm(q).split(/\s+/).filter(Boolean);
-    currentListing = terms.length ? RECIPES.filter(r => terms.every(t => r.haystack.includes(t))) : RECIPES;
-    return pageHead({ eyebrow: 'Busca', title: `Resultados para <em>“${esc(q)}”</em>` })
-      + `<section class="wrap section-tight">${listing(currentListing, `<div class="empty"><h3>Nada por aqui com “${esc(q)}”.</h3><p>Tente o nome de um ingrediente, como “frango” ou “coco”, ou explore as categorias.</p><a class="btn" href="#/receitas">Ver todas as receitas</a></div>`)}</section>`;
+    const rs = terms.length ? RECIPES.filter(r => terms.every(t => r.haystack.includes(t))) : RECIPES;
+    return listingPage({ trail: [[null, 'Busca']], title: `Receitas com “${esc(q)}”`, rs,
+      emptyHtml: `<div class="empty"><h3>Nada por aqui com “${esc(q)}”.</h3><p>Tente o nome de um ingrediente, como “frango” ou “coco”, ou explore as categorias.</p><a class="btn" href="#/receitas">Ver todas as receitas</a></div>` });
   }
   function favs() {
-    currentListing = RECIPES.filter(r => favorites.has(r.id));
-    return pageHead({ eyebrow: 'Guardadas neste navegador', title: 'Minhas <em>favoritas</em>', desc: 'Toque no coração de qualquer receita para guardar aqui.' })
-      + `<section class="wrap section-tight">${currentListing.length ? listing(currentListing) : `<div class="empty"><h3>Nenhuma favorita ainda.</h3><p>Quando uma receita der vontade de repetir, toque no coração.</p><a class="btn" href="#/receitas">Explorar receitas</a></div>`}</section>`;
+    return listingPage({ trail: [[null, 'Favoritas']], title: 'Minhas favoritas', desc: 'Guardadas neste navegador.', rs: RECIPES.filter(r => favorites.has(r.id)),
+      emptyHtml: `<div class="empty"><h3>Nenhuma favorita ainda.</h3><p>Quando uma receita der vontade de repetir, toque no coração.</p><a class="btn" href="#/receitas">Explorar receitas</a></div>` });
   }
   function fridge(raw) {
     currentListing = null;
     const chips = (raw || '').split(',').map(s => s.trim()).filter(Boolean);
     const keys = chips.map(c => { const n = norm(c); return n.length > 3 ? n.replace(/(oes|aes|es|s)$/, '') : n; });
     const scored = keys.length ? RECIPES.map(r => ({ r, hit: keys.filter(k => r.ingText.includes(k)).length })).filter(x => x.hit).sort((a, b) => b.hit - a.hit || a.r.count - b.r.count) : [];
-    return pageHead({ eyebrow: 'Ferramenta', title: 'O que tem <em>na geladeira?</em>', desc: 'Adicione ingredientes um a um. Ordenamos pelas receitas que usam mais deles e pedem menos itens extras.' })
-      + `<section class="wrap section-tight">
-        <form class="fridge-tool" data-fridge-tool><div class="chip-input">${chips.map((c, i) => `<span class="ing-chip">${esc(c)}<button type="button" data-remove-chip="${i}" aria-label="Remover ${esc(c)}">×</button></span>`).join('')}
+    return `<div class="wrap page">${crumbs([[null, 'O que tem na geladeira?']])}
+      <header class="page-title" style="--tone:var(--sage-soft)"><h1>O que tem na geladeira?</h1><p>Adicione ingredientes um a um. Primeiro aparecem as receitas que usam mais deles.</p></header>
+      <form class="fridge-tool" data-fridge-tool><div class="chip-input">${chips.map((c, i) => `<span class="ing-chip">${esc(c)}<button type="button" data-remove-chip="${i}" aria-label="Remover ${esc(c)}">×</button></span>`).join('')}
         <label class="sr-only" for="fridge-input">Adicionar ingrediente</label><input id="fridge-input" placeholder="${chips.length ? 'Mais um ingrediente…' : 'Ex.: ovo, depois Enter'}" autocomplete="off"></div>
         <button class="btn">Adicionar</button></form>
-        <div class="fridge-suggest">Comuns: ${['ovo', 'frango', 'tomate', 'batata', 'leite condensado', 'arroz', 'chocolate', 'limão', 'queijo', 'coco'].filter(x => !chips.includes(x)).map(x => `<button type="button" data-add-chip="${x}">${x}</button>`).join('')}</div>
-        ${!keys.length ? `<div class="empty soft"><h3>Comece por um ingrediente.</h3><p>Funciona melhor com o principal: “frango”, “banana”, “leite condensado”.</p></div>`
-          : scored.length ? `<p class="results" role="status">${plural(scored.length, 'receita usa', 'receitas usam')} pelo menos um dos ingredientes.</p>${grid(scored.map(x => x.r), r => { const h = scored.find(x => x.r === r).hit; return { badge: keys.length > 1 ? `usa ${h} de ${keys.length}` : '' }; })}`
-          : `<div class="empty"><h3>Nenhuma receita com esses ingredientes.</h3><p>Tente escrever de outro jeito (por exemplo, “queijo” em vez de “muçarela”).</p></div>`}
-      </section>`;
+      <div class="fridge-suggest">Sugestões: ${['ovo', 'frango', 'tomate', 'batata', 'leite condensado', 'arroz', 'chocolate', 'limão', 'queijo', 'coco'].filter(x => !chips.includes(x)).map(x => `<button type="button" data-add-chip="${x}">${x}</button>`).join('')}</div>
+      <div class="fridge-results">${!keys.length ? `<div class="empty soft"><h3>Comece por um ingrediente.</h3><p>Funciona melhor com o principal: “frango”, “banana”, “leite condensado”.</p></div>`
+        : scored.length ? grid(scored.map(x => x.r), 'grid-4')
+        : `<div class="empty"><h3>Nenhuma receita com esses ingredientes.</h3><p>Tente escrever de outro jeito (por exemplo, “queijo” em vez de “muçarela”).</p></div>`}</div>
+    </div>`;
   }
 
   function recipePage(id) {
     const r = BY_ID[id]; if (!r) return notFound();
     currentListing = null;
     const c = CAT[r.category], fav = favorites.has(r.id), n = servingsFor(r), f = n / r.serves;
-    const related = inCat(r.category).filter(x => x.id !== r.id);
-    const rnd = seeded(r.id + new Date().toDateString());
-    const rel = related.sort(() => rnd() - .5).slice(0, 4);
-    return `<article class="recipe" style="--tone:${c.tone};--cink:${c.ink}">
-      <header class="recipe-head"><div class="wrap recipe-head-inner">
-        <div class="recipe-intro">
-          <nav class="crumbs" aria-label="Você está em"><a href="#/">Início</a><a href="#/categoria/${c.key}">${esc(c.name)}</a></nav>
-          <h1>${esc(r.title)}</h1>
-          <p class="lede">${esc(r.line)}</p>
-          <dl class="facts">
-            <div><dt>Mão na massa</dt><dd>${esc(r.prep)}</dd></div>
-            <div><dt>Tempo total</dt><dd>${fmtTotal(r.minutes)}</dd></div>
-            <div><dt>Rende</dt><dd>${esc(r.yield_)}</dd></div>
-            <div><dt>Dificuldade</dt><dd>${r.level}</dd></div>
-          </dl>
-          ${r.wait && r.wait !== '—' ? `<p class="wait">${ICON.clock}<span><strong>Planeje:</strong> ${esc(r.wait)}.</span></p>` : ''}
-          <div class="recipe-actions">
-            <button class="btn" data-cook="${r.id}">${ICON.chef} Modo cozinhar</button>
-            <button class="btn btn-ghost" data-fav="${r.id}" aria-pressed="${fav}">${ICON.heart}<span>${fav ? 'Guardada' : 'Guardar'}</span></button>
-            <button class="icon-btn" data-print aria-label="Imprimir receita">${ICON.print}</button>
-            <button class="icon-btn" data-share aria-label="Copiar link da receita">${ICON.link}</button>
-          </div>
-        </div>
-        <div class="recipe-art">${art(r, 'big')}</div>
-      </div></header>
-
-      <div class="wrap recipe-body">
-        <aside class="ingredients" aria-labelledby="ing-title">
-          <div class="ing-head"><h2 id="ing-title">Ingredientes</h2>
-            <div class="stepper" role="group" aria-label="Ajustar porções">
-              <button type="button" data-serv="-1" aria-label="Diminuir porções"${n <= 1 ? ' disabled' : ''}>−</button>
-              <output aria-live="polite"><strong>${n}</strong> ${n === 1 ? 'porção' : 'porções'}</output>
-              <button type="button" data-serv="1" aria-label="Aumentar porções"${n >= r.serves * 4 ? ' disabled' : ''}>+</button>
+    const related = daily(inCat(r.category).filter(x => x.id !== r.id), 5, r.id);
+    const other = daily(RECIPES.filter(x => x.category !== r.category), 3, 'o' + r.id);
+    return `<div class="wrap page recipe" style="--tone:${c.tone};--cink:${c.ink}">${crumbs([['#/categoria/' + c.key, c.name], [null, r.title]])}
+      <div class="recipe-layout">
+        <article class="recipe-main">
+          <header class="recipe-header">
+            <a class="tag" href="#/categoria/${c.key}">${esc(c.name)}</a>
+            <h1>${esc(r.title)}</h1>
+            <p class="lede">${esc(r.line)}</p>
+            <div class="recipe-actions">
+              <button class="btn btn-ghost" data-fav="${r.id}" aria-pressed="${fav}">${ICON.heart}<span>${fav ? 'Guardada' : 'Guardar'}</span></button>
+              <button class="btn btn-ghost" data-share>${ICON.link}<span>Compartilhar</span></button>
+              <button class="btn btn-ghost" data-print>${ICON.print}<span>Imprimir</span></button>
             </div>
-          </div>
-          ${f !== 1 ? `<p class="scaled-note">Quantidades ajustadas de ${r.serves} para ${n} porções. <button type="button" class="link-btn" data-serv-reset>Voltar ao original</button></p>` : `<p class="scaled-note">Xícara de 240 ml · colheres medidoras rasas.</p>`}
-          ${r.groups.map((g, gi) => `<div class="ing-group">${g.name ? `<h3>${esc(g.name)}</h3>` : ''}<ul>${g.items.map((it, ii) => `<li><label><input type="checkbox" data-check="${gi}-${ii}"><span>${esc(scaleItem(it, f))}</span></label></li>`).join('')}</ul></div>`).join('')}
-          ${r.equipment ? `<p class="equipment"><strong>Na bancada:</strong> ${esc(r.equipment)}</p>` : ''}
-          <button class="btn btn-soft wide" data-add-list="${r.id}">${ICON.cart} Adicionar à lista de compras</button>
-        </aside>
-        <div class="method">
-          <h2>Modo de preparo</h2>
-          <ol class="steps">${r.steps.map(s => `<li><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>
-          ${r.finish ? `<div class="finish"><h3>Para servir</h3><p>${esc(r.finish)}</p></div>` : ''}
-          <aside class="tip"><span class="eyebrow">Dica da casa</span><p>${esc(r.tip)}</p></aside>
+          </header>
+          <div class="recipe-photo">${art(r, 'big')}</div>
+          <ul class="info-bar">
+            <li>${ICON.clock}<span>Preparo<strong>${esc(r.prep)}</strong></span></li>
+            <li>${ICON.clock}<span>Tempo total<strong>${fmtTotal(r.minutes)}</strong></span></li>
+            <li>${ICON.people}<span>Rendimento<strong>${esc(r.yield_)}</strong></span></li>
+            <li>${ICON.flame}<span>Dificuldade<strong>${r.level}</strong></span></li>
+          </ul>
+          ${r.wait && r.wait !== '—' ? `<p class="wait">${ICON.clock}<span><strong>Planeje:</strong> ${esc(r.wait)}.</span></p>` : ''}
+
+          <section class="box ingredients" aria-labelledby="ing-title">
+            <div class="ing-head"><h2 id="ing-title">Ingredientes</h2>
+              <div class="stepper" role="group" aria-label="Ajustar porções">
+                <button type="button" data-serv="-1" aria-label="Diminuir porções"${n <= 1 ? ' disabled' : ''}>−</button>
+                <output aria-live="polite"><strong>${n}</strong> ${n === 1 ? 'porção' : 'porções'}</output>
+                <button type="button" data-serv="1" aria-label="Aumentar porções"${n >= r.serves * 4 ? ' disabled' : ''}>+</button>
+              </div>
+            </div>
+            ${f !== 1 ? `<p class="scaled-note">Quantidades ajustadas de ${r.serves} para ${n} porções. <button type="button" class="link-btn" data-serv-reset>Voltar ao original</button></p>` : `<p class="scaled-note">Xícara de 240 ml · colheres medidoras rasas.</p>`}
+            <div class="ing-cols${r.groups.length > 1 ? " multi" : ""}">${r.groups.map((g, gi) => `<div class="ing-group">${g.name ? `<h3>${esc(g.name)}</h3>` : ''}<ul>${g.items.map((it, ii) => `<li><label><input type="checkbox" data-check="${gi}-${ii}"><span>${esc(scaleItem(it, f))}</span></label></li>`).join('')}</ul></div>`).join('')}</div>
+            ${r.equipment ? `<p class="equipment"><strong>Na bancada:</strong> ${esc(r.equipment)}</p>` : ''}
+            <button class="btn btn-soft" data-add-list="${r.id}">${ICON.cart} Adicionar à lista de compras</button>
+          </section>
+
+          <section class="box method" aria-labelledby="method-title">
+            <div class="ing-head"><h2 id="method-title">Modo de preparo</h2><button class="btn" data-cook="${r.id}">${ICON.chef} Modo cozinhar</button></div>
+            <ol class="steps">${r.steps.map(s => `<li><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p></li>`).join('')}</ol>
+            ${r.finish ? `<div class="finish"><h3>Para servir</h3><p>${esc(r.finish)}</p></div>` : ''}
+          </section>
+
+          <aside class="tip"><h2>Dica da casa</h2><p>${esc(r.tip)}</p></aside>
           <p class="disclaimer">Tempos e rendimentos aproximados: fornos, fogões e ingredientes variam. Quando o ponto descrito e o relógio discordarem, confie no ponto.</p>
-        </div>
+        </article>
+
+        <aside class="side recipe-side">
+          <div class="side-box"><h2>Mais em ${esc(c.name)}</h2>${related.map(mini).join('')}<a class="text-link" href="#/categoria/${c.key}">Ver todas ${ICON.arrow}</a></div>
+          <div class="side-box"><h2>Você também pode gostar</h2>${other.map(mini).join('')}</div>
+          <a class="side-promo" href="#/geladeira">${ICON.fridge}<span><strong>O que tem na geladeira?</strong>Diga o que sobrou e veja o que dá para fazer.</span></a>
+        </aside>
       </div>
-      <section class="wrap section related"><div class="section-head"><div><span class="eyebrow">Do mesmo caderno</span><h2>Mais em ${esc(c.name)}</h2></div><a class="text-link" href="#/categoria/${c.key}">Ver as ${related.length + 1} ${ICON.arrow}</a></div>${grid(rel)}</section>
-    </article>`;
+    </div>`;
   }
 
   function notFound() {
     currentListing = null;
-    return pageHead({ eyebrow: 'Página não encontrada', title: 'Essa receita <em>saiu do forno</em> e sumiu.', desc: 'O endereço pode estar errado ou a receita mudou de lugar.' }) + `<section class="wrap section-tight"><a class="btn" href="#/">Voltar ao início</a></section>`;
+    return `<div class="wrap page">${crumbs([[null, 'Página não encontrada']])}<header class="page-title"><h1>Essa receita saiu do forno e sumiu.</h1><p>O endereço pode estar errado ou a receita mudou de lugar.</p></header><a class="btn" href="#/">Voltar ao início</a></div>`;
   }
 
   /* ---------- roteador ---------- */
@@ -564,8 +575,10 @@
       case 'receita': html = recipePage(arg); title = (BY_ID[arg]?.title || 'Receita') + ' · Colher de Prosa'; break;
       default: html = notFound();
     }
+    clearInterval(carouselTimer);
     app.innerHTML = html;
     document.title = title;
+    if (view === '') initCarousel();
     $$('[data-mega]', navList).forEach(a => a.classList.toggle('is-current', view === 'categoria' && a.dataset.mega === arg));
     if (view !== 'busca' && document.activeElement !== $('#search')) $('#search').value = '';
     if (changedPage) {
@@ -591,8 +604,10 @@
     if (lastRoute === '#/favoritas' && !on) route();
   }
   function updateCounts() {
-    $('#fav-count').textContent = favorites.size;
-    $('#list-count').textContent = list.filter(x => !x.done).length;
+    // Os contadores só aparecem quando há algo guardado.
+    const fc = $('#fav-count'), lc = $('#list-count'), pending = list.filter(x => !x.done).length;
+    fc.textContent = favorites.size; fc.hidden = !favorites.size;
+    lc.textContent = pending; lc.hidden = !pending;
   }
 
   /* ---------- lista de compras ---------- */
@@ -720,8 +735,6 @@
     const fav = e.target.closest('[data-fav]');
     if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav); return; }
     if (e.target.closest('[data-open-list]') || e.target.closest('#open-list')) { openList(); return; }
-    const f = e.target.closest('[data-filter]');
-    if (f) { filters[f.dataset.filter] = !filters[f.dataset.filter]; refreshListing(); return; }
     const serv = e.target.closest('[data-serv]'), reset = e.target.closest('[data-serv-reset]');
     if (serv || reset) {
       const id = location.hash.split('/')[2], r = BY_ID[id]; if (!r) return;
@@ -751,7 +764,10 @@
     const rmChip = e.target.closest('[data-remove-chip]');
     if (rmChip) { const c = fridgeChips(); c.splice(+rmChip.dataset.removeChip, 1); setFridge(c); }
   });
-  document.addEventListener('change', e => { if (e.target.matches('[data-sort]')) { filters.sort = e.target.value; refreshListing(); } });
+  document.addEventListener('change', e => {
+    if (e.target.matches('[data-sort]')) { filters.sort = e.target.value; refreshListing(); }
+    if (e.target.matches('[data-filter]')) { filters[e.target.dataset.filter] = e.target.checked; refreshListing(); }
+  });
 
   const fridgeChips = () => decodeURIComponent(location.hash.split('/')[2] || '').split(',').map(s => s.trim()).filter(Boolean);
   function setFridge(chips) {
