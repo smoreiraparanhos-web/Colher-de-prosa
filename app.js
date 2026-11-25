@@ -55,6 +55,10 @@
   }).sort((a, b) => order[a.category] - order[b.category] || a.i - b.i);
   const BY_ID = Object.fromEntries(RECIPES.map(r => [r.id, r]));
   const inCat = key => RECIPES.filter(r => r.category === key);
+  const curHash = () => location.hash || document.getElementById('app').dataset.rota || '#/';
+  const routeArg = () => curHash().split('/')[2];
+  // Endereço público e permanente de uma receita (página própria, indexável).
+  const recipeURL = id => new URL(`receitas/${id}/`, document.baseURI).href;
 
   /* ---------- estado persistente ---------- */
   let favorites = new Set(store.get('cp-favoritas', []).filter(id => BY_ID[id]));
@@ -280,7 +284,7 @@
   const nav = $('#catnav'), mega = $('#mega'), navList = $('#catnav-list');
   navList.innerHTML = CATS.map(c => `<li><a class="catnav-link" href="#/categoria/${c.key}" data-mega="${c.key}" aria-expanded="false" aria-controls="mega">${esc(c.name)}</a></li>`).join('')
     + `<li><a class="catnav-link more" href="#/receitas" data-mega="mais" aria-expanded="false" aria-controls="mega">E muito mais<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></a></li>`;
-  $('#footer-links').innerHTML = CATS.map(c => `<a href="#/categoria/${c.key}">${esc(c.name)}</a>`).join('') + COLLECTIONS.map(c => `<a href="#/colecao/${c.key}">${esc(c.name)}</a>`).join('') + '<a href="#/creditos">Créditos das fotos</a>';
+  $('#footer-links').innerHTML = CATS.map(c => `<a href="#/categoria/${c.key}">${esc(c.name)}</a>`).join('') + COLLECTIONS.map(c => `<a href="#/colecao/${c.key}">${esc(c.name)}</a>`).join('') + '<a href="#/sobre">Sobre o Colher de Prosa</a><a href="#/privacidade">Privacidade</a><a href="#/creditos">Créditos das fotos</a>';
 
   let megaKey = null, openTimer, closeTimer;
   function preview(r) {
@@ -382,7 +386,7 @@
 
   function season() {
     const m = new Date().getMonth();
-    if (m >= 10) return { key: 'natal', title: 'O Natal está chegando', desc: 'Monte o cardápio da ceia com antecedência: dá tempo de testar antes do dia.' };
+    if (m >= 10) return { key: 'natal', title: 'O Natal está chegando', desc: 'Monte o cardápio da ceia com antecedência: dá tempo de fazer um ensaio antes do grande dia.' };
     if (m >= 1 && m <= 3) return { key: 'pascoa', title: 'Para a mesa de Páscoa', desc: 'Bacalhau, cordeiro e chocolate para o almoço de domingo.' };
     return null;
   }
@@ -562,15 +566,53 @@
       <ul class="credits">${rs.map(r => `<li><a class="credits-thumb" href="#/receita/${r.id}">${art(r, '', r.title)}</a><div><a href="#/receita/${r.id}"><strong>${esc(r.title)}</strong></a><p>${credit(r.foto)}</p></div></li>`).join('')}</ul></div>`;
   }
 
+  function about() {
+    currentListing = null;
+    const fotos = RECIPES.filter(r => r.foto).length;
+    return `<div class="wrap page prose-page">${crumbs([[null, 'Sobre']])}
+      <header class="page-title"><h1>Receitas de casa, com tempo para a prosa</h1><p>O Colher de Prosa é um caderno de receitas brasileiras feito para quem cozinha de verdade: no celular apoiado na bancada, com a mão suja de farinha e gente chegando para o almoço.</p></header>
+      <div class="prose">
+        <h2>O que você encontra aqui</h2>
+        <p>${RECIPES.length} receitas em ${CATS.length} categorias, do arroz de todo dia à ceia de Natal, ${fotos} delas com foto. Cada uma traz medidas claras (com o peso em gramas sempre que ajuda), o ponto certo descrito em palavras e uma dica da casa para não errar.</p>
+        <h2>Feito para usar na cozinha</h2>
+        <ul>
+          <li><strong>Porções que se ajustam:</strong> mude o número de pessoas e as quantidades são recalculadas.</li>
+          <li><strong>Modo cozinhar:</strong> um passo por vez, letras grandes e timers que avisam quando tirar do fogo.</li>
+          <li><strong>O que tem na geladeira?</strong> Diga o que sobrou e veja o que dá para fazer.</li>
+          <li><strong>Salvar no WhatsApp:</strong> a receita chega inteira na sua conversa, pronta para guardar.</li>
+        </ul>
+        <h2>Sem pop-up no meio do preparo</h2>
+        <p>Nada de janela pulando na tela enquanto você mexe a panela. A receita vem primeiro.</p>
+        <p><a class="btn" href="#/receitas">Ver todas as receitas</a></p>
+      </div></div>`;
+  }
+  function privacy() {
+    currentListing = null;
+    return `<div class="wrap page prose-page">${crumbs([[null, 'Privacidade']])}
+      <header class="page-title"><h1>Privacidade</h1><p>Resumo honesto: o Colher de Prosa não tem cadastro, não pede login e não recebe os seus dados.</p></header>
+      <div class="prose">
+        <h2>O que fica guardado no seu aparelho</h2>
+        <p>Suas receitas favoritas, as porções que você ajustou e, se você pedir, o seu número de WhatsApp ficam salvos apenas no armazenamento local do seu navegador. Eles não são enviados ao site nem a terceiros. Para apagar, basta limpar os dados de navegação deste site.</p>
+        <h2>Salvar no WhatsApp</h2>
+        <p>Ao tocar em “Salvar no WhatsApp”, o site abre o próprio WhatsApp com a receita escrita na mensagem. O envio acontece só quando você aperta enviar, dentro do aplicativo, e segue a política de privacidade do WhatsApp.</p>
+        <h2>Fontes e fotos</h2>
+        <p>As fontes tipográficas são carregadas do Google Fonts, que pode registrar o acesso técnico (endereço IP e navegador). As fotos ficam hospedadas junto com o site.</p>
+        <h2>Alergias e restrições</h2>
+        <p>Tempos, rendimentos e conversões de porção são aproximados. Confira sempre os rótulos dos ingredientes em caso de alergia ou restrição alimentar.</p>
+      </div></div>`;
+  }
+
   function notFound() {
     currentListing = null;
     return `<div class="wrap page">${crumbs([[null, 'Página não encontrada']])}<header class="page-title"><h1>Essa receita saiu do forno e sumiu.</h1><p>O endereço pode estar errado ou a receita mudou de lugar.</p></header><a class="btn" href="#/">Voltar ao início</a></div>`;
   }
 
-  /* ---------- roteador ---------- */
+  /* ---------- roteador ----------
+     As páginas estáticas geradas (receitas/<id>/, categorias/<id>/ …) trazem a rota em
+     <main data-rota>, para abrir já na tela certa mesmo sem # no endereço. */
   let lastRoute = '';
   function route() {
-    const hash = location.hash || '#/';
+    const hash = curHash();
     if (!hash.startsWith('#/')) return; // âncoras internas (ex.: pular para o conteúdo)
     const [, view = '', ...rest] = hash.slice(1).split('/');
     const arg = decodeURIComponent(rest.join('/'));
@@ -586,6 +628,8 @@
       case 'favoritas': html = favs(); title = 'Favoritas · Colher de Prosa'; break;
       case 'geladeira': html = fridge(arg); title = 'O que tem na geladeira? · Colher de Prosa'; break;
       case 'creditos': html = credits(); title = 'Créditos das fotos · Colher de Prosa'; break;
+      case 'sobre': html = about(); title = 'Sobre · Colher de Prosa'; break;
+      case 'privacidade': html = privacy(); title = 'Privacidade · Colher de Prosa'; break;
       case 'receita': html = recipePage(arg); title = (BY_ID[arg]?.title || 'Receita') + ' · Colher de Prosa'; break;
       default: html = notFound();
     }
@@ -637,7 +681,7 @@
     lines.push('', '*Modo de preparo*');
     r.steps.forEach((s, i) => lines.push(`${i + 1}. *${s.title}:* ${s.text}`));
     if (r.finish) lines.push('', `*Para servir:* ${r.finish}`);
-    lines.push('', `*Dica:* ${r.tip}`, '', `Receita completa no Colher de Prosa: ${location.origin}${location.pathname}#/receita/${r.id}`);
+    lines.push('', `*Dica:* ${r.tip}`, '', `Receita completa no Colher de Prosa: ${recipeURL(r.id)}`);
     return lines.join('\n');
   }
   function sendWhatsApp(r, number) {
@@ -760,10 +804,10 @@
     if (fav) { e.preventDefault(); toggleFav(fav.dataset.fav); return; }
     const wa = e.target.closest('[data-wa]');
     if (wa) { const r = BY_ID[wa.dataset.wa]; if (waNumber) sendWhatsApp(r, waNumber); else askWhatsApp(r); return; }
-    if (e.target.closest('[data-wa-change]')) { waRecipe = BY_ID[location.hash.split('/')[2]] || null; askWhatsApp(waRecipe); return; }
+    if (e.target.closest('[data-wa-change]')) { waRecipe = BY_ID[routeArg()] || null; askWhatsApp(waRecipe); return; }
     const serv = e.target.closest('[data-serv]'), reset = e.target.closest('[data-serv-reset]');
     if (serv || reset) {
-      const id = location.hash.split('/')[2], r = BY_ID[id]; if (!r) return;
+      const id = routeArg(), r = BY_ID[id]; if (!r) return;
       const n = reset ? r.serves : Math.max(1, Math.min(r.serves * 4, servingsFor(r) + +serv.dataset.serv));
       servingsPref[id] = n; store.set('cp-porcoes', servingsPref);
       const checked = $$('[data-check]:checked', app).map(x => x.dataset.check);
@@ -778,7 +822,8 @@
     if (ck) { openCook(ck.dataset.cook); return; }
     if (e.target.closest('[data-print]')) { window.print(); return; }
     if (e.target.closest('[data-share]')) {
-      const url = location.href, title = document.title;
+      const r = BY_ID[curHash().startsWith('#/receita/') && routeArg()];
+      const url = r ? recipeURL(r.id) : location.href, title = document.title;
       if (navigator.share && matchMedia('(pointer: coarse)').matches) navigator.share({ title, url }).catch(() => {});
       else (navigator.clipboard?.writeText(url) || Promise.reject()).then(() => toast('Link da receita copiado.'), () => toast(url));
       return;
@@ -793,7 +838,7 @@
     if (e.target.matches('[data-filter]')) { filters[e.target.dataset.filter] = e.target.checked; refreshListing(); }
   });
 
-  const fridgeChips = () => decodeURIComponent(location.hash.split('/')[2] || '').split(',').map(s => s.trim()).filter(Boolean);
+  const fridgeChips = () => decodeURIComponent(routeArg() || '').split(',').map(s => s.trim()).filter(Boolean);
   function setFridge(chips) {
     const uniq = [...new Set(chips.map(c => c.trim().toLowerCase()).filter(Boolean))];
     history.replaceState(null, '', '#/geladeira/' + encodeURIComponent(uniq.join(',')));
@@ -831,6 +876,8 @@
   document.addEventListener('keydown', e => {
     if (e.key === '/' && !/input|textarea|select/i.test(document.activeElement.tagName) && !document.querySelector('dialog[open]')) { e.preventDefault(); searchInput.focus(); }
   });
+
+  $('.skip').addEventListener('click', e => { e.preventDefault(); app.focus(); });
 
   window.addEventListener('hashchange', route);
   route();

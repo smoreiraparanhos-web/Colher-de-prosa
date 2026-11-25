@@ -449,7 +449,7 @@ window.RECIPES = (window.RECIPES || []).concat([
    },
    {
     "title": "Confere o ponto",
-    "text": "Teste um grão: ele deve estar bem macio. Se ainda estiver firme, cozinhe mais um pouco com água suficiente, seguindo as orientações da panela. Escorra o excesso de água, deixando um pouco de caldo."
+    "text": "Prove um grão: ele deve estar bem macio. Se ainda estiver firme, cozinhe mais um pouco com água suficiente, seguindo as orientações da panela. Escorra o excesso de água, deixando um pouco de caldo."
    },
    {
     "title": "Coco na conversa",
